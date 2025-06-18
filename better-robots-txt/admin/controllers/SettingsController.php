@@ -92,6 +92,8 @@ class SettingsController {
         ];
         $options = $this->sanitize_options( $_POST['options'], $safe );
         $result = update_option( 'robots_txt', $options );
+        // Handle physical robots.txt file creation/deletion
+        $this->handle_physical_robots_file( $options );
         if ( $result ) {
             wp_send_json_success( [
                 'options' => $options,
@@ -150,6 +152,35 @@ class SettingsController {
         ];
         $premium_fields = [];
         return array_merge( $fields, $premium_fields );
+    }
+
+    /**
+     * Handle creation/deletion of physical robots.txt file
+     *
+     * @param array $options The saved options array
+     */
+    private function handle_physical_robots_file( $options ) {
+        return;
+        $robots_file_path = ABSPATH . 'robots.txt';
+        $create_physical = isset( $options['create_physical_file'] ) && $options['create_physical_file'] === 'yes';
+        if ( $create_physical ) {
+            // Use RobotsController to generate content - avoiding duplication
+            $robots_controller = new \Pagup\BetterRobots\Controllers\RobotsController();
+            $robots_content = $robots_controller->generate_robots_content( $options );
+            // Create/update the physical file
+            $result = file_put_contents( $robots_file_path, $robots_content );
+            if ( $result === false ) {
+                error_log( 'Better Robots.txt: Failed to create physical robots.txt file' );
+            }
+        } else {
+            // Delete physical robots.txt file if it exists
+            if ( file_exists( $robots_file_path ) ) {
+                $deleted = unlink( $robots_file_path );
+                if ( !$deleted ) {
+                    error_log( 'Better Robots.txt: Failed to delete physical robots.txt file' );
+                }
+            }
+        }
     }
 
 }

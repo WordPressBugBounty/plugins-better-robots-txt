@@ -27,6 +27,12 @@ trait SettingHelper
                 $options[$key] = sanitize_text_field( $value );
             } elseif ( $key === 'backlinks_bots' ) {
                 $options[$key] = maybe_serialize( Request::array( $value ) );
+            } elseif ( $key === 'create_physical_file' ) {
+                if ( in_array( $value, $safe ) ) {
+                    $options[$key] = sanitize_text_field( $value );
+                } else {
+                    $options[$key] = "";
+                }
             } else {
                 if ( in_array( $value, $safe ) ) {
                     $options[$key] = sanitize_text_field( $value );
@@ -275,6 +281,34 @@ trait SettingHelper
      */
     public function devNotification() {
         return '<div class="ep-alert ep-alert--error is-light" role="alert" style="width: 99%; margin-top: 1rem; font-weight: 700"><i class="ep-icon ep-alert__icon"><svg style="height: 1em; width: 1em;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m0 192a58.432 58.432 0 0 0-58.24 63.744l23.36 256.384a35.072 35.072 0 0 0 69.76 0l23.296-256.384A58.432 58.432 0 0 0 512 256m0 512a51.2 51.2 0 1 0 0-102.4 51.2 51.2 0 0 0 0 102.4"></path></svg></i><div class="ep-alert__content"><span class="ep-alert__title">PLUGIN IS RUNNING IN DEVELOPMENT MODE</span></div></div>';
+    }
+
+    /**
+     * Handle creation/deletion of physical robots.txt file
+     *
+     * @param array $options The saved options array
+     */
+    public function handle_physical_robots_file( $options ) {
+        $robots_file_path = ABSPATH . 'robots.txt';
+        $create_physical = isset( $options['create_physical_file'] ) && $options['create_physical_file'] === 'yes';
+        if ( $create_physical ) {
+            // Use RobotsController to generate content - avoiding duplication
+            $robots_controller = new \Pagup\BetterRobots\Controllers\RobotsController();
+            $robots_content = $robots_controller->generate_robots_content( $options );
+            // Create/update the physical file
+            $result = file_put_contents( $robots_file_path, $robots_content );
+            if ( $result === false ) {
+                error_log( 'Better Robots.txt: Failed to create physical robots.txt file' );
+            }
+        } else {
+            // Delete physical robots.txt file if it exists
+            if ( file_exists( $robots_file_path ) ) {
+                $deleted = unlink( $robots_file_path );
+                if ( !$deleted ) {
+                    error_log( 'Better Robots.txt: Failed to delete physical robots.txt file' );
+                }
+            }
+        }
     }
 
 }

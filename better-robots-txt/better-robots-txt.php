@@ -4,7 +4,7 @@
 * Plugin Name: Better Robots.txt - Index, rank & SEO booster + Woocommerce
 * Description: Better-Robots.txt plugin helps you boosting your website indexation and your ranking by adding specific instructions in your robots.txt
 * Author: Pagup
-* Version: 2.0.1
+* Version: 2.0.2
 * Author URI: https://pagup.com/
 * Text Domain: better-robots-txt
 * Domain Path: /languages/

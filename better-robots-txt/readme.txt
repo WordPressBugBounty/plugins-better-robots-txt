@@ -2,9 +2,9 @@
 Contributors: the-rock, pagup, freemius
 Tags: robots, crawler, search engines, seo, robots.txt
 Requires at least: 4.1
-Requires PHP: 5.6
+Requires PHP: 7.4
 Tested up to: 6.8
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -377,3 +377,7 @@ You can create your own ads.txt files to identify who is authorized to sell your
 
 = 2.0.1 =
 * 🐛 FIX: Freemius SDK Security fix
+
+= 2.0.2 =
+* 🔥 NEW: Generate a Physical file in PRO version. Recommended for PageSpeed Insights compatibility.
+* 👌 IMPROVE: Update Freemius to v2.12.0
