@@ -4,7 +4,7 @@
 * Plugin Name: Better Robots.txt - Index, rank & SEO booster + Woocommerce
 * Description: Better-Robots.txt plugin helps you boosting your website indexation and your ranking by adding specific instructions in your robots.txt
 * Author: Pagup
-* Version: 2.0.2
+* Version: 2.0.4
 * Author URI: https://pagup.com/
 * Text Domain: better-robots-txt
 * Domain Path: /languages/
@@ -91,6 +91,16 @@ if ( function_exists( 'rtf_fs' ) ) {
             10,
             6
         );
+        // Hook for license changes (cancellation, expiration, downgrade, etc.)
+        rtf_fs()->add_action( 'after_license_change', array('Pagup\\BetterRobots\\Controllers\\SettingsController', 'cleanup_on_license_change') );
+        // Hook for license deactivation
+        rtf_fs()->add_action( 'after_license_deactivation', array('Pagup\\BetterRobots\\Controllers\\SettingsController', 'cleanup_on_license_change') );
+        // Hook for account deletion (covers license deletion scenarios)
+        rtf_fs()->add_action( 'after_account_delete', array('Pagup\\BetterRobots\\Controllers\\SettingsController', 'cleanup_on_license_change') );
+        // Fallback hook for plugin uninstall
+        rtf_fs()->add_action( 'after_uninstall', array('Pagup\\BetterRobots\\Controllers\\SettingsController', 'cleanup_on_uninstall') );
+        // Register cron action hook for WP-CLI compatibility
+        add_action( 'robots_txt_check_license_status', array('Pagup\\BetterRobots\\Controllers\\SettingsController', 'cron_check_license_status') );
     }
     class BetterRobots {
         function __construct() {

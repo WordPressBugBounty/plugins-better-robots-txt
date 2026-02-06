@@ -23,6 +23,8 @@ class SettingsController {
         ) ), esc_url( "admin.php?page=better-robots-txt-pricing" ) );
         $this->yoast_sitemap_url = home_url() . '/sitemap_index.xml';
         $this->xml_sitemap_url = home_url() . '/sitemap.xml';
+        // Schedule cron job for license verification
+        $this->schedule_license_check_cron();
     }
 
     public function add_settings() {
@@ -171,15 +173,163 @@ class SettingsController {
             $result = file_put_contents( $robots_file_path, $robots_content );
             if ( $result === false ) {
                 error_log( 'Better Robots.txt: Failed to create physical robots.txt file' );
+            } else {
+                // Track that this file was created by our plugin
+                update_option( 'robots_txt_physical_created_by_plugin', current_time( 'timestamp' ) );
+                update_option( 'robots_txt_physical_file_hash', md5_file( $robots_file_path ) );
+                error_log( 'Better Robots.txt: Physical robots.txt file created and tracked' );
             }
         } else {
-            // Delete physical robots.txt file if it exists
-            if ( file_exists( $robots_file_path ) ) {
+            // Delete physical robots.txt file if it exists and was created by us
+            if ( file_exists( $robots_file_path ) && $this->verify_file_ownership( $robots_file_path ) ) {
                 $deleted = unlink( $robots_file_path );
-                if ( !$deleted ) {
+                if ( $deleted ) {
+                    // Clean up tracking options
+                    delete_option( 'robots_txt_physical_created_by_plugin' );
+                    delete_option( 'robots_txt_physical_file_hash' );
+                    error_log( 'Better Robots.txt: Physical robots.txt file deleted and tracking removed' );
+                } else {
                     error_log( 'Better Robots.txt: Failed to delete physical robots.txt file' );
                 }
             }
+        }
+    }
+
+    /**
+     * Verify if the physical robots.txt file was created by our plugin
+     *
+     * @param string $file_path Path to robots.txt file
+     * @return bool True if file was created by plugin
+     */
+    private function verify_file_ownership( $file_path ) {
+        // Check if tracking option exists
+        if ( !get_option( 'robots_txt_physical_created_by_plugin' ) ) {
+            return false;
+        }
+        // Verify file contains our signature OR matches stored hash
+        $file_content = file_get_contents( $file_path );
+        $has_signature = strpos( $file_content, '# This robots.txt file was created by Better Robots.txt' ) !== false;
+        $stored_hash = get_option( 'robots_txt_physical_file_hash' );
+        $current_hash = md5_file( $file_path );
+        $hash_matches = $stored_hash && $stored_hash === $current_hash;
+        return $has_signature || $hash_matches;
+    }
+
+    /**
+     * Cleanup physical robots.txt file when premium access is lost
+     * Called by Freemius hook when license changes
+     *
+     * @param object $license License object from Freemius
+     */
+    public static function cleanup_on_license_change( $license = null ) {
+        $robots_file_path = ABSPATH . 'robots.txt';
+        // Check if tracking option exists
+        if ( !get_option( 'robots_txt_physical_created_by_plugin' ) ) {
+            // File wasn't created by us, don't touch it
+            error_log( 'Better Robots.txt: No tracking found, skipping cleanup' );
+            return;
+        }
+        // Verify file exists
+        if ( !file_exists( $robots_file_path ) ) {
+            // File doesn't exist, just clean up tracking
+            delete_option( 'robots_txt_physical_created_by_plugin' );
+            delete_option( 'robots_txt_physical_file_hash' );
+            error_log( 'Better Robots.txt: File not found, tracking cleaned up' );
+            return;
+        }
+        // Verify file ownership before deletion
+        $file_content = file_get_contents( $robots_file_path );
+        $has_signature = strpos( $file_content, '# This robots.txt file was created by Better Robots.txt' ) !== false;
+        $stored_hash = get_option( 'robots_txt_physical_file_hash' );
+        $current_hash = md5_file( $robots_file_path );
+        $hash_matches = $stored_hash && $stored_hash === $current_hash;
+        if ( $has_signature || $hash_matches ) {
+            // File was created by us, safe to delete
+            $deleted = unlink( $robots_file_path );
+            if ( $deleted ) {
+                delete_option( 'robots_txt_physical_created_by_plugin' );
+                delete_option( 'robots_txt_physical_file_hash' );
+                error_log( 'Better Robots.txt: Physical file deleted due to license change. License ID: ' . (( $license && !empty( $license->id ) ? $license->id : 'N/A' )) );
+            } else {
+                error_log( 'Better Robots.txt: Failed to delete physical robots.txt file on license change' );
+            }
+        } else {
+            // File was modified by user, don't delete but clean up tracking
+            delete_option( 'robots_txt_physical_created_by_plugin' );
+            delete_option( 'robots_txt_physical_file_hash' );
+            error_log( 'Better Robots.txt: File was modified by user, tracking removed but file preserved' );
+        }
+    }
+
+    /**
+     * Cleanup physical robots.txt file during plugin uninstall
+     * Fallback cleanup method
+     */
+    public static function cleanup_on_uninstall() {
+        $robots_file_path = ABSPATH . 'robots.txt';
+        // Only cleanup if tracking exists
+        if ( get_option( 'robots_txt_physical_created_by_plugin' ) && file_exists( $robots_file_path ) ) {
+            // Verify ownership before deletion
+            $file_content = file_get_contents( $robots_file_path );
+            $has_signature = strpos( $file_content, '# This robots.txt file was created by Better Robots.txt' ) !== false;
+            if ( $has_signature ) {
+                unlink( $robots_file_path );
+                error_log( 'Better Robots.txt: Physical file deleted during uninstall' );
+            }
+        }
+        // Always clean up tracking options
+        delete_option( 'robots_txt_physical_created_by_plugin' );
+        delete_option( 'robots_txt_physical_file_hash' );
+    }
+
+    /**
+     * Schedule the license check cron job
+     */
+    private function schedule_license_check_cron() {
+        // Check if already scheduled
+        if ( !wp_next_scheduled( 'robots_txt_check_license_status' ) ) {
+            // Schedule to run every hour
+            wp_schedule_event( time(), 'hourly', 'robots_txt_check_license_status' );
+        }
+    }
+
+    /**
+     * Cron job: Check license status and cleanup if needed
+     * This runs hourly as a fallback for when hooks don't fire
+     */
+    public static function cron_check_license_status() {
+        $robots_file_path = ABSPATH . 'robots.txt';
+        // Check if we have tracking data
+        if ( !get_option( 'robots_txt_physical_created_by_plugin' ) ) {
+            // No tracking data, nothing to do
+            return;
+        }
+        // Check if file exists
+        if ( !file_exists( $robots_file_path ) ) {
+            // File doesn't exist, clean up tracking only
+            delete_option( 'robots_txt_physical_created_by_plugin' );
+            delete_option( 'robots_txt_physical_file_hash' );
+            return;
+        }
+        // Verify file ownership before deletion
+        $file_content = file_get_contents( $robots_file_path );
+        $has_signature = strpos( $file_content, '# This robots.txt file was created by Better Robots.txt' ) !== false;
+        $stored_hash = get_option( 'robots_txt_physical_file_hash' );
+        $current_hash = md5_file( $robots_file_path );
+        $hash_matches = $stored_hash && $stored_hash === $current_hash;
+        if ( $has_signature || $hash_matches ) {
+            // File was created by us, safe to delete
+            $deleted = unlink( $robots_file_path );
+            if ( $deleted ) {
+                delete_option( 'robots_txt_physical_created_by_plugin' );
+                delete_option( 'robots_txt_physical_file_hash' );
+                error_log( 'Better Robots.txt: Physical file deleted by cron job due to missing premium access' );
+            }
+        } else {
+            // File was modified by user, don't delete but clean up tracking
+            delete_option( 'robots_txt_physical_created_by_plugin' );
+            delete_option( 'robots_txt_physical_file_hash' );
+            error_log( 'Better Robots.txt: File was modified by user, tracking removed by cron but file preserved' );
         }
     }
 

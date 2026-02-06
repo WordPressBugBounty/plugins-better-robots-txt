@@ -1,14 +1,14 @@
-=== WordPress Robots.txt optimizer (+ XML Sitemap) – Boost SEO, Traffic & Rankings ===
+=== AI-Ready & LLM-Optimized WordPress Robots.txt (+ Sitemaps) – Boost SEO, Traffic & AI Rankings ===
 Contributors: the-rock, pagup, freemius
 Tags: robots, crawler, search engines, seo, robots.txt
 Requires at least: 4.1
 Requires PHP: 7.4
-Tested up to: 6.8
-Stable tag: 2.0.2
+Tested up to: 6.9
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-All-in-One SEO plugin for Wordpress Robots.txt optimization with XML Sitemap detection (Yoast, Rank Math, ...), Woocommerce booster, Robots.txt editor, ...
+All-in-One SEO plugin for Wordpress Robots.txt optimization with XML Sitemap detection (Yoast, Rank Math, ...), Woocommerce booster, Robots.txt editor.
 
 == Description ==
 
@@ -381,3 +381,10 @@ You can create your own ads.txt files to identify who is authorized to sell your
 = 2.0.2 =
 * 🔥 NEW: Generate a Physical file in PRO version. Recommended for PageSpeed Insights compatibility.
 * 👌 IMPROVE: Update Freemius to v2.12.0
+
+= 2.0.3 =
+* 👌 IMPROVE: Physical file (PRO version) functionality. Recommended for PageSpeed Insights compatibility.
+* 👌 IMPROVE: Update Freemius to v2.13.0
+
+= 2.0.4 =
+* 🐛 FIX: Freemius and dev mode issues.

@@ -51,8 +51,8 @@ class Settings {
             
             } else {
             
-                Asset::script_remote('robots__client', 'http://localhost:3213/@vite/client', array(), true, true);
-                Asset::script_remote('robots__main', 'http://localhost:3213/src/main.ts', array(), true, true);
+                Asset::script_remote('robots__client', 'http://172.31.36.77:3213/@vite/client', array(), true, true);
+                Asset::script_remote('robots__main', 'http://172.31.36.77:3213/src/main.ts', array(), true, true);
             }
 
         }
