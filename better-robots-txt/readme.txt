@@ -1,133 +1,241 @@
-=== AI-Ready & LLM-Optimized WordPress Robots.txt (+ Sitemaps) – Boost SEO, Traffic & AI Rankings ===
-Contributors: the-rock, pagup, freemius
-Tags: robots, crawler, search engines, seo, robots.txt
-Requires at least: 4.1
+=== Better Robots.txt - AI-Ready Crawl Control & Bot Governance ===
+Contributors: pagup, the-rock, freemius
+Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
+Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.0.4
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-All-in-One SEO plugin for Wordpress Robots.txt optimization with XML Sitemap detection (Yoast, Rank Math, ...), Woocommerce booster, Robots.txt editor.
+Replace the default WordPress robots.txt workflow with a smarter, structured version you can preview before publishing, with Free, Pro, and Premium editions.
 
 == Description ==
 
-Better Robots.txt generates a virtual robots.txt for WordPress, enhancing your website's SEO (indexation capabilities, Google ranking, etc.) and its loading performance. Our plugin is compatible with Yoast SEO, Rank Math, Google Merchant, WooCommerce, and directory-based network sites (MULTISITE) and features now (2023) exclusive Artificial Intelligence (OpenAI) optimization settings for greater performance.
+Better Robots.txt replaces the default WordPress robots.txt workflow with a smarter, structured version you can configure and preview before publishing.
 
-With Better Robots.txt, you can specify which search engines are permitted to crawl your website and provide clear directives about their allowed activities. You can also set a crawl-delay to shield your hosting server from aggressive scrapers. Better Robots.txt empowers you with complete control over your WordPress robots.txt content through the custom setting box.
+Instead of a blank textarea, you get a guided wizard with presets, plain-language explanations, and a final Review & Save step so you can inspect the generated robots.txt before it goes live.
 
-Minimize [your site's ecological footprint and the production of greenhouse gas](https://better-robots.com/how-to-save-the-planet-with-your-website/) (CO2) associated with its online presence.
+Built for beginners and advanced users alike, Better Robots.txt helps you control how search engines, AI crawlers, SEO tools, archive bots, bad bots, social preview bots, and other automated agents interact with your site.
 
-According to ChatGPT (OpenAI), the robots.txt produced by the PRO version of Better-Robots.txt is the most sophisticated and comprehensive available on the WEB for a WordPress site.
+Trusted by thousands of WordPress sites, Better Robots.txt is designed for the AI era without resorting to hype, vague promises, or hidden rules.
 
-**A quick overview:**
+Better Robots.txt is available in Free, Pro, and Premium editions. The free plugin covers the guided workflow and essential crawl control features, while Pro and Premium unlock additional governance, protection, and AI-ready modules. Some screenshots on the plugin page show features from all three editions.
 
-https://vimeo.com/306589027
+## A quick overview
 
-**SUPPORTED IN 7 LANGUAGES**
+https://vimeo.com/1169756981
 
-Better Robots.txt plugins are available and translated into the following languages: Chinese –汉语/漢語, English, French – Français, Russian –Руссɤɢɣ, Portuguese – Português, Spanish – Español, German – Deutsch.
+## Why Better Robots.txt is different
 
-Did you know that…
+Most robots.txt plugins fall into one of three categories:
 
-- The robots.txt file is a straightforward text file positioned on your web server that instructs web crawlers (like Googlebot) on whether they should access a file or not.
-- The robots.txt file governs how search engine spiders perceive and engage with your web pages;
-- This file and the bots it communicates with, are integral components of how search engines operate;
-- The initial thing a search engine crawler examines when it visits a page is the robots.txt file;
+- Simple text editor
+- Virtual robots.txt manager
+- Single-purpose AI or policy add-on
 
-**The robots.txt is a reservoir of SEO potential that's ready to be tapped into. Give Better Robots.txt a try!**
+Better Robots.txt goes further.
 
-**About the Pro version (additional features):**
+It gives you a complete, guided crawl control workflow so you can:
 
-**1. Enhance your content visibility on search engines with your sitemap!**
+- Choose a preset that matches your goals
+- Control major crawler categories without writing everything by hand
+- Keep core WordPress protection rules visible and editable
+- Clean up low-value crawl paths that waste crawl budget
+- Generate a cleaner robots.txt output
+- Preview the final result before saving
 
-Ensure your pages, articles, and products, even the most recent ones, are recognized by search engines!
+## What you can control
 
-The Better Robots.txt plugin is designed to integrate with the Yoast SEO plugin and Rank Math (arguably the best SEO Plugin for WordPress websites). It will automatically detect if you are using Yoast SEO / Rank Math and if the sitemap feature is enabled. If so, it will automatically add instructions to the Robots.txt file directing bots/crawlers to review your sitemap for recent changes on your website (allowing search engines to crawl any new content).
+Better Robots.txt helps you manage:
 
-If you wish to add your own sitemap (or if you are using a different SEO plugin), you simply need to copy and paste your Sitemap URL, and Better Robots.txt will incorporate it into your WordPress Robots.txt.
+- Search engine visibility
+- AI and LLM crawler behavior
+- AI usage signals such as search, ai-input, and ai-train preferences
+- SEO tool crawlers
+- Bad bots and abusive crawlers
+- Archive and Wayback access
+- Feed crawlers and crawl traps
+- WooCommerce crawl cleanup
+- CSS, JavaScript, and image crawling rules
+- Social media preview crawlers
+- ads.txt and app-ads.txt allowance
+- llms.txt generation
+- Advanced directives such as crawl-delay and custom rules
+- Final review before publishing
 
-**2. Safeguard your data and content**
+## Editions
 
-Prevent harmful bots from scraping your website and exploiting your data.
+Better Robots.txt is available in three editions:
 
-The Better Robots.txt plugin assists in blocking most common malicious bots from crawling and scraping your data.
+- Free - Includes the guided setup, the Essential preset, core crawl control features, and the final Review & Save workflow.
+- Pro - Adds more advanced governance and protection modules, including additional AI, crawler, and cleanup controls.
+- Premium - Unlocks the most restrictive and advanced protection options, including the Fortress preset and additional high-control modules.
 
-There are both beneficial and harmful bots that crawl your site. Beneficial bots, like Google bot, crawl your site to index it for search engines. However, others crawl your site for more malicious reasons such as repurposing your content (text, price, etc.) for republishing, downloading entire archives of your site, or extracting your images. Some bots have even been reported to crash entire websites due to excessive bandwidth usage.
+Some options shown in the interface are marked Free, Pro, or Premium so users can immediately understand which modules belong to each edition.
 
-The Better Robots.txt plugin shields your website against spiders/scrapers identified as harmful bots by Distil Networks.
+## Presets
 
-**3. Conceal & safeguard your backlinks**
+Setup starts with four modes:
 
-Prevent competitors from discovering your profitable backlinks.
+- Essential - A clean, practical configuration for most websites that want a better robots.txt without complexity.
+- AI-First - For publishers and content sites that want AI-ready governance without shutting down discovery.
+- Fortress - For websites that want stronger protection against scraping, archive capture, and unnecessary crawl activity.
+- Custom - For users who prefer to configure each module manually.
 
-Backlinks, also known as "inbound links" or "incoming links," are created when one website links to another. The link to an external website is called a backlink. Backlinks are particularly valuable for SEO as they signify a "vote of confidence" from one site to another. Essentially, backlinks to your website signal to search engines that others endorse your content.
+For many sites, one preset plus a quick review is enough.
 
-If numerous sites link to the same webpage or website, search engines can deduce that the content is link-worthy, and therefore worth displaying on a SERP. Thus, earning these backlinks can positively impact a site's ranking position or search visibility. In the SEM industry, it's common for specialists to identify the sources of these backlinks (competitors) to select the best ones and generate high-quality backlinks for their own clients.
+## Built for beginners and experts
 
-Given that creating highly profitable backlinks for a company is time-consuming (time + energy + budget), allowing your competitors to identify and replicate them so easily is a significant loss of efficiency.
+Beginners get:
 
-**Better Robots.txt aids in blocking all SEO crawlers (aHref, Majestic, Semrush) to keep your backlinks hidden.**
+- A guided setup instead of a raw robots.txt box
+- Preset-based configuration
+- Plain-language explanations for important choices
+- A safer workflow with a final preview step
 
-**4. Prevent Spam Backlinks**
+Advanced users get:
 
-Bots that populate your website's comment forms with messages like 'great article,' 'love the info,' 'hope you can elaborate more on the topic soon' or even personalized comments, including the author's name, are widespread. Spambots are becoming increasingly sophisticated over time, and unfortunately, comment spam links can seriously damage your backlink profile.
+- Editable core WordPress protection rules
+- Fine-grained crawler controls by category
+- WooCommerce-oriented cleanup options
+- Consolidated output options
+- Advanced directives and custom rules
+- A final output they can inspect before publishing
 
-Better Robots.txt assists in preventing these comments from being indexed by search engines.
+## AI-ready, without hype
 
-**5. Artificial Intelligence at the service of Robots.txt**
+Better Robots.txt includes features for modern AI-related crawl governance, including:
 
-In 2023, we added a robots.txt optimization feature based on OpenAI's (ChatGPT) recommendations for any WordPress site. These settings maximize the efficiency of robots.txt for search engines to streamline the crawling of a website. More improvements are on the way...
+- AI crawler handling
+- Optional llms.txt support
+- AI usage signals for compliant systems
+- Optional machine-readable governance signals for advanced use cases
 
-In 2023, ChatGPT 4, after auditing several million robots.txt files available on the WEB, assessed that the robots.txt deployed by the PRO version of the Better-Robots.txt plugin was the most advanced, comprehensive, and sophisticated configuration currently available for WordPress environments. A point of pride for our team!
+These features help you express how you want automated systems to use your content.
 
-**6. SEO Tools**
+However, Better Robots.txt does not claim to control AI by force. Like robots.txt itself, these signals are most useful with compliant systems and good-faith crawlers.
 
-In the process of enhancing our plugin, we've incorporated shortcut links to two crucial tools for those concerned about their search engine rankings: Google Search Console & Bing Webmaster Tool. If you're not already utilizing them, you can now manage your website's indexing while optimizing your robots.txt! We've also provided direct access to a Mass Ping tool, enabling you to ping your links on over 70 search engines.
+## What Better Robots.txt is
 
-Additionally, we've created four shortcut links to some of the best Online SEO Tools, directly accessible through Better Robots.txt SEO PRO. This means you can now check your site's loading performance, analyze your SEO score, identify your current SERP rankings with keywords & traffic, and even scan your entire website for dead links (404, 503 errors, etc.) directly from the plugin.
+Better Robots.txt is:
 
-**7. Stand Out**
+- A robots.txt governance plugin for WordPress
+- A guided configuration workflow instead of a raw text editor
+- A crawl control layer to reduce wasteful crawling
+- A practical bridge between SEO, crawl hygiene, and AI-era policy signaling
+- A way to keep your crawl policy clearer for humans and machines
 
-We thought we could add a unique touch to Better Robots.txt by introducing a feature that lets you "customize" your WordPress robots.txt with your own distinctive "signature." Many major companies worldwide have personalized their robots.txt by adding proverbs (https://www.yelp.com/robots.txt), slogans (https://www.youtube.com/robots.txt), or even drawings (https://store.nike.com/robots.txt – at the bottom). Why not do the same? That's why we've dedicated a specific area on the settings page where you can write or draw anything you want (really) without affecting your robots.txt efficiency.
+Technical reference for advanced users: Better Robots.txt also maintains a public <a href="https://github.com/GautierDorval/better-robots-txt" rel="nofollow noopener noreferrer" target="_blank">GitHub repository</a> with product definition, governance notes, and machine-readable artefacts.
 
-**8. Prevent Crawling of Redundant WooCommerce Links**
+## What Better Robots.txt is not
 
-We've introduced a unique feature that blocks specific links ("add-to-cart", "orderby", "filter", cart, account, checkout, etc.) from being crawled by search engines. Most of these links demand a significant amount of CPU, memory & bandwidth usage (on the hosting server) as they are not cacheable and/or create "infinite" crawling loops (while they are unnecessary).
+Better Robots.txt is not:
 
-By optimizing your WordPress robots.txt for WooCommerce when running an online store, you can allocate more processing power to the pages that truly matter and enhance your loading performance.
+- A firewall or Web Application Firewall (WAF)
+- An anti-scraping enforcement engine
+- A legal compliance engine
+- A guarantee that every bot will obey your rules
+- A replacement for server-level security or access control
 
-**9. Dodge Crawler Traps**
+It helps you publish a clearer crawl policy.
 
-"Crawler traps" are structural issues within a website that lead crawlers to discover a virtually infinite number of irrelevant URLs. In theory, crawlers could get stuck in one part of a website and never finish crawling these irrelevant URLs.
+It does not replace infrastructure-level protection.
 
-Better Robots.txt aids in preventing crawler traps, which can harm crawl budget and result in duplicate content.
+## Typical use cases
 
-**10. Growth Hacking Tools**
+Use Better Robots.txt if you want to:
 
-Today's fastest-growing companies, including Amazon, Airbnb, and Facebook, have all achieved breakout growth by aligning their teams around a high-velocity testing/learning process. This is referred to as Growth Hacking. Growth hacking is a process of rapidly experimenting with and implementing marketing and promotional strategies that are solely focused on efficient and rapid business growth. Better Robots.txt provides a list of over 150+ tools available online to propel your growth.
+- Clean up a weak or noisy default robots.txt
+- Reduce crawl waste on WordPress or WooCommerce
+- Keep major search engines allowed while restricting other bots
+- Control whether archive bots can snapshot your site
+- Publish AI usage preferences more clearly
+- Keep social preview bots allowed while limiting scrapers
+- Review the final file before making it live
 
-**11. Robots.txt Post Meta Box for Manual Exclusions**
+## Key Features
 
-This Post Meta Box allows you to manually set if a page should be visible (or not) on search engines by injecting a dedicated "disallow" + "noindex" rule inside your WordPress robots.txt. Why is this beneficial for your ranking on search engines? Simply because some pages are not meant to be crawled/indexed.
+- Guided step-by-step wizard
+- Preset-based setup: Essential, AI-First, Fortress, Custom
+- Search engine visibility controls
+- AI and LLM crawler governance
+- AI usage signals support
+- SEO tool crawler controls
+- Bad bot and abusive crawler options
+- Archive and Wayback access controls
+- Spam, feed, and crawl trap cleanup
+- WooCommerce crawl cleanup options
+- CSS, JavaScript, and image crawling rules
+- Social media preview crawler controls
+- ads.txt and app-ads.txt allowance
+- Optional llms.txt generation
+- Consolidated output option
+- Core WordPress protection rules remain visible and editable
+- Final Review & Save preview screen
 
-Thank you pages, landing pages, pages containing exclusively forms are useful for visitors but not for crawlers, and you don't need them to be visible on search engines. Also, some pages containing dynamic calendars (for online booking) should NEVER be accessible to crawlers because they tend to trap them into infinite crawling loops which directly impacts your crawl budget (and your ranking).
+== Installation ==
 
-**12. Ads.txt & App-ads.txt Crawlability**
+1. Upload the plugin files to the /wp-content/plugins/better-robots-txt/ directory, or install Better Robots.txt through the WordPress Plugins screen.
+2. Activate the plugin through the Plugins screen in WordPress.
+3. Open the Better Robots.txt settings page from your WordPress dashboard.
+4. Choose a preset or configure each module manually.
+5. Follow the wizard until the final Review & Save step.
+6. Review the generated robots.txt preview.
+7. Save your changes.
 
-To ensure that ads.txt & app-ads.txt can be crawled by search engines, the Better Robots.txt plugin ensures they are by default allowed in the Robots.txt file regardless of your configuration. For your information, Authorized Digital Sellers for Web, or ads.txt, is an IAB initiative to improve transparency in programmatic advertising.
+== Frequently Asked Questions ==
 
-You can create your own ads.txt files to identify who is authorized to sell your inventory. The files are publicly available and crawlable by exchanges, Supply-Side Platforms (SSP), and other buyers and third-party vendors. Authorized Sellers for Apps, or app-ads.txt, is an extension to the Authorized Digital Sellers standard. It expands compatibility to support ads shown in mobile apps.
+= Does this plugin create or manage robots.txt? =
 
-**More enhancements are always on the way...**
+Yes. Better Robots.txt generates and manages your WordPress robots.txt through a guided interface, with a preview before you apply changes.
+
+= Is this only for advanced users? =
+
+No. The plugin is designed for both beginners and advanced users. Presets make the first setup easy, while experts can fine-tune individual modules and directives.
+
+= Can I preview the result before saving? =
+
+Yes. The final Review & Save step shows you the generated robots.txt before you publish it.
+
+= Can I block AI crawlers? =
+
+You can configure how AI-related crawlers and tools are treated and publish AI usage preferences. Respect and enforcement still depend on each crawler's behavior, just like with robots.txt.
+
+= Does llms.txt guarantee that AI systems will follow my rules? =
+
+No. llms.txt and similar policy signals help you express intent more clearly, but they are not a hard technical barrier.
+
+= Can I keep search engines allowed while restricting other bots? =
+
+Yes. Better Robots.txt helps you differentiate between crawler categories instead of using a simple all-or-nothing approach.
+
+= Can I change preset decisions later? =
+
+Yes. Presets are a starting point. You can revisit the settings page, adjust modules, and regenerate your robots.txt at any time.
+
+= Are all screenshots from the free version? =
+
+No. The screenshots reflect the current product family and may include Free, Pro, and Premium features. Features marked Pro or Premium in the interface require a paid edition.
+
+= Is the free version still useful on its own? =
+
+Yes. The free edition includes the guided workflow, essential crawl control, and the final preview step. Pro and Premium are for sites that need broader governance and stricter protection.
+
+= Does this plugin help WooCommerce sites? =
+
+Yes. Better Robots.txt includes WooCommerce-related cleanup options to reduce unnecessary crawling of dynamic, low-value, or duplicate URLs.
 
 == Screenshots ==
 
-1. Better Robots.txt Settings Page
-2. Better Robots.txt Settings Page
-3. Better Robots.txt Settings Page
-4. Better Robots.txt Settings Page
-5. Robots.txt file output
+1. Step 0 - Preset selection with product introduction and setup guidance.
+2. Step 1 - Search engine visibility controls.
+3. Step 2 - AI and LLM governance settings.
+4. Step 4 - Bad bot protection options.
+5. Step 8 - WooCommerce cleanup settings.
+6. Step 10 - Social media crawler controls.
+7. Step 13 - Advanced settings and output options.
+8. Step 14 - Review & Save preview screen.
 
 == Changelog ==
 
@@ -388,3 +496,15 @@ You can create your own ads.txt files to identify who is authorized to sell your
 
 = 2.0.4 =
 * 🐛 FIX: Freemius and dev mode issues.
+
+= 3.0.0 =
+* 🔥 NEW: 14-steps granular configuration process
+* 🔥 NEW: Complete UI redesign with an intuitive stepper-based interface and dynamic Preview
+* 🔥 NEW: Configuration Modes: Custom, Free, Pro, and Premium Presets
+* 🔥 NEW: Granular AI & LLM Governance (Block AI training bots, OpenAI, Claude, AI search engines)
+* 🔥 NEW: SSA (Safe Software Association) doctrine integration for AI governance declaration
+* 🔥 NEW: Advanced Bot & Scraper protection with new basic and AI-curated full lists
+* 🔥 NEW: Enhanced Spam & Feed Protection (Feeds, author archives, comments)
+* 🔥 NEW: Advanced E-commerce optimization for WooCommerce
+* 🔥 NEW: Dedicated control for Social Media bots, Archive Services, and Ads crawlability
+* 🐛 FIX: Numerous backend optimizations, compatibility improvements, and security patches

@@ -1,5 +1,7 @@
 <div class="misc-pub-section misc-pub-section-last"><span id="timestamp">
 
+    <?php wp_nonce_field( 'rt_metabox_save', 'rt_metabox_nonce' ); ?>
+
     <!-- <div class="rt-segment" style="margin-top: 10px"> -->
 
         <p class="post-attributes-label-wrapper"><label class="post-attributes-label" for="alt_text"><?php echo  esc_html__( 'Disallow this post in robots.txt*', 'better-robots-txt' ); ?></label></p>

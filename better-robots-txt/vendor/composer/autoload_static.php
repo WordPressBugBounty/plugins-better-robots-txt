@@ -6,25 +6,58 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit04e98c36e78e8c4dc39021769985089e
 {
+    public static $files = array (
+        '8d50dc88e56bace65e1e72f6017983ed' => __DIR__ . '/..' . '/freemius/wordpress-sdk/start.php',
+    );
+
+    public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'Pagup\\BetterRobots\\Traits\\' => 26,
+            'Pagup\\BetterRobots\\Core\\' => 24,
+            'Pagup\\BetterRobots\\Controllers\\' => 31,
+            'Pagup\\BetterRobots\\Config\\' => 26,
+            'Pagup\\BetterRobots\\Bootstrap\\' => 29,
+            'Pagup\\BetterRobots\\' => 19,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Pagup\\BetterRobots\\Traits\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/admin/traits',
+        ),
+        'Pagup\\BetterRobots\\Core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/admin/core',
+        ),
+        'Pagup\\BetterRobots\\Controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/admin/controllers',
+        ),
+        'Pagup\\BetterRobots\\Config\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/admin/config',
+        ),
+        'Pagup\\BetterRobots\\Bootstrap\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/bootstrap',
+        ),
+        'Pagup\\BetterRobots\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/admin',
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Pagup\\BetterRobots\\Controllers\\MetaboxController' => __DIR__ . '/../..' . '/admin/controllers/MetaboxController.php',
-        'Pagup\\BetterRobots\\Controllers\\NotificationController' => __DIR__ . '/../..' . '/admin/controllers/NotificationController.php',
-        'Pagup\\BetterRobots\\Controllers\\RobotsController' => __DIR__ . '/../..' . '/admin/controllers/RobotsController.php',
-        'Pagup\\BetterRobots\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/admin/controllers/SettingsController.php',
-        'Pagup\\BetterRobots\\Core\\Asset' => __DIR__ . '/../..' . '/core/Asset.php',
-        'Pagup\\BetterRobots\\Core\\Option' => __DIR__ . '/../..' . '/core/Option.php',
-        'Pagup\\BetterRobots\\Core\\Plugin' => __DIR__ . '/../..' . '/core/Plugin.php',
-        'Pagup\\BetterRobots\\Core\\Request' => __DIR__ . '/../..' . '/core/Request.php',
-        'Pagup\\BetterRobots\\Settings' => __DIR__ . '/../..' . '/admin/Settings.php',
-        'Pagup\\BetterRobots\\Traits\\RobotsHelper' => __DIR__ . '/../..' . '/admin/traits/RobotsHelper.php',
-        'Pagup\\BetterRobots\\Traits\\SettingHelper' => __DIR__ . '/../..' . '/admin/traits/SettingHelper.php',
-        'Pagup\\BetterRobots\\Traits\\Sitemap' => __DIR__ . '/../..' . '/admin/traits/Sitemap.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$classMap;
 
         }, null, ClassLoader::class);

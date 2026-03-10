@@ -6,4 +6,10 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Pagup\\BetterRobots\\Traits\\' => array($baseDir . '/admin/traits'),
+    'Pagup\\BetterRobots\\Core\\' => array($baseDir . '/admin/core'),
+    'Pagup\\BetterRobots\\Controllers\\' => array($baseDir . '/admin/controllers'),
+    'Pagup\\BetterRobots\\Config\\' => array($baseDir . '/admin/config'),
+    'Pagup\\BetterRobots\\Bootstrap\\' => array($baseDir . '/bootstrap'),
+    'Pagup\\BetterRobots\\' => array($baseDir . '/admin'),
 );

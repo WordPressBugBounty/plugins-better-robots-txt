@@ -1,8 +1,16 @@
 {
     "autoload": {
-        "classmap": [
-            "core/",
-            "admin/"
-        ]
+        "psr-4": {
+            "Pagup\\BetterRobots\\": "admin/",
+            "Pagup\\BetterRobots\\Core\\": "admin/core/",
+            "Pagup\\BetterRobots\\Controllers\\": "admin/controllers/",
+            "Pagup\\BetterRobots\\Traits\\": "admin/traits/",
+            "Pagup\\BetterRobots\\Config\\": "admin/config/",
+            "Pagup\\BetterRobots\\Bootstrap\\": "bootstrap/"
+        }
+    },
+    "require": {
+        "php": ">=7.4",
+        "freemius/wordpress-sdk": "^2.13"
     }
 }
