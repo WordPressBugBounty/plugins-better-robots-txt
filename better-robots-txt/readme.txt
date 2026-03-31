@@ -4,7 +4,7 @@ Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,27 @@ Use Better Robots.txt if you want to:
 - Core WordPress protection rules remain visible and editable
 - Final Review & Save preview screen
 
+= About the publisher =
+
+
+Better Robots.txt is developed and maintained by [Pagup](https://pagup.com/), a digital readability firm based in Quebec, Canada. Pagup helps organizations become correctly understood by search engines, generative AI systems, and autonomous agents.
+
+
+The robots.txt file is the first surface that AI crawlers read when they discover a site. A well-structured robots.txt that references governance files such as llms.txt, ai-manifest.json, and interpretation policies helps AI systems understand your site faster and more accurately.
+
+
+Better Robots.txt is one component of a broader digital readability practice that includes [semantic content architecture](https://pagup.com/en/services/semantic-content-architecture/), [AI governance and machine readability](https://pagup.com/en/services/ai-governance-and-machine-readability/), and [interpretive SEO](https://pagup.com/en/glossary/interpretive-seo/).
+
+
+= Part of the Pagup ecosystem =
+
+
+* [pagup.com](https://pagup.com/) — Digital readability firm. Diagnostic, semantic architecture, AI governance.
+* [gautierdorval.com](https://gautierdorval.com/) — Doctrine, canonical definitions, interpretive governance research.
+* [interpretive-governance.org](https://interpretive-governance.org/) — Formal versioned standard for interpretive governance.
+* [better-robots.com](https://better-robots.com/) — Documentation and resources for Better Robots.txt.
+
+
 == Installation ==
 
 1. Upload the plugin files to the /wp-content/plugins/better-robots-txt/ directory, or install Better Robots.txt through the WordPress Plugins screen.
@@ -225,6 +246,21 @@ Yes. The free edition includes the guided workflow, essential crawl control, and
 = Does this plugin help WooCommerce sites? =
 
 Yes. Better Robots.txt includes WooCommerce-related cleanup options to reduce unnecessary crawling of dynamic, low-value, or duplicate URLs.
+
+= Who develops Better Robots.txt? =
+
+Better Robots.txt is developed by [Pagup](https://pagup.com/), a digital readability firm based in Quebec, Canada. Pagup specializes in helping organizations become correctly readable by search engines, AI systems, and autonomous agents.
+
+= Why does robots.txt matter for AI readability? =
+
+Your robots.txt is the first file that AI crawlers read when they visit your site. It determines what content they can access and what governance signals they discover. In 2026, AI systems such as ChatGPT, Perplexity, Gemini, and autonomous agents rely on robots.txt to understand how to interact with your site. A robots.txt that references your llms.txt, ai-manifest.json, and governance policies helps these systems interpret your organization more accurately.
+
+Learn more about [AI governance and machine readability](https://pagup.com/en/services/ai-governance-and-machine-readability/) and why [digital readability](https://pagup.com/en/glossary/digital-readability/) goes beyond traditional SEO.
+
+= What is digital readability? =
+
+Digital readability is the capacity of a website to be correctly understood by all four reading layers: humans, search engines, generative AI systems, and autonomous agents. Traditional SEO addresses only the search engine layer. Digital readability covers all four. Learn more at [pagup.com](https://pagup.com/en/glossary/digital-readability/).
+
 
 == Screenshots ==
 
@@ -508,3 +544,7 @@ Yes. Better Robots.txt includes WooCommerce-related cleanup options to reduce un
 * 🔥 NEW: Advanced E-commerce optimization for WooCommerce
 * 🔥 NEW: Dedicated control for Social Media bots, Archive Services, and Ads crawlability
 * 🐛 FIX: Numerous backend optimizations, compatibility improvements, and security patches
+
+= 3.0.1 =
+* 🐛 FIX: Removed Push notification popup during freemius opt-in.
+* 👌 IMPROVE: Update Freemius to v2.13.1

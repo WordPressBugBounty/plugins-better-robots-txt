@@ -109,12 +109,6 @@ class Settings {
         }
         // Global admin assets (metabox etc.)
         Asset::style( 'rt_styles', 'admin/assets/app.css' );
-        Asset::script(
-            'rt_script',
-            'admin/assets/app.js',
-            [],
-            true
-        );
     }
 
     /**
