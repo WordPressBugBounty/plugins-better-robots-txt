@@ -162,8 +162,8 @@ trait SettingHelper
                 "img"  => "../assets/imgs/2.jpg",
             ],
             [
-                "name" => __( "Better Robots.txt optimization – Website indexing, traffic, ranking & SEO Booster + Woocommerce", "bulk-image-alt-text-with-yoast" ),
-                "desc" => __( "Better Robots.txt is an all in one SEO robots.txt plugin, it creates a virtual robots.txt including your XML sitemaps (Yoast or else) to boost your website ranking on search engines.", "bulk-image-alt-text-with-yoast" ),
+                "name" => __( "Better Robots.txt – Crawl control, robots.txt governance & AI-ready signals", "bulk-image-alt-text-with-yoast" ),
+                "desc" => __( "Better Robots.txt helps WordPress site owners manage robots.txt, crawler access preferences, and optional AI governance signals without promising ranking or crawler compliance.", "bulk-image-alt-text-with-yoast" ),
                 "link" => "https://wordpress.org/plugins/better-robots-txt/",
                 "img"  => "../assets/imgs/3.png",
             ],

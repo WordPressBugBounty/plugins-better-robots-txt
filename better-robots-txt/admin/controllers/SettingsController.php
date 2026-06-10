@@ -71,11 +71,50 @@ class SettingsController {
             'recommendations'      => $this->recommendations_list(),
             'robots_url'           => $this->robotsTxtURL(),
             'physical_file'        => $this->get_physical_file_status(),
+            'import_history'       => $this->get_import_history_public_state(),
         ) );
         if ( ROBOTS_PLUGIN_MODE !== "prod" ) {
             echo $this->devNotification();
         }
         echo '<div id="rt__app"></div>';
+    }
+
+    /**
+     * Return import history and rollback metadata without exposing backup settings.
+     *
+     * @return array<string, mixed>
+     */
+    private function get_import_history_public_state() {
+        $history = get_option( 'robots_txt_import_history', [] );
+        $backup = get_option( 'robots_txt_backup_pre_import', null );
+        if ( !is_array( $history ) ) {
+            $history = [];
+        }
+        return [
+            'history' => array_values( $history ),
+            'backup'  => ( is_array( $backup ) ? $this->get_public_import_backup( $backup ) : null ),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $backup
+     * @return array<string, mixed>
+     */
+    private function get_public_import_backup( array $backup ) {
+        $current = get_option( 'robots_txt' );
+        $current_hash = ( is_array( $current ) ? md5( (string) wp_json_encode( $current ) ) : '' );
+        $applied_hash = (string) ($backup['applied_settings_hash'] ?? '');
+        $expires = strtotime( (string) ($backup['expires_at'] ?? '') );
+        return [
+            'id'                       => (string) ($backup['id'] ?? ''),
+            'created_at'               => (string) ($backup['created_at'] ?? ''),
+            'expires_at'               => (string) ($backup['expires_at'] ?? ''),
+            'user_id'                  => (int) ($backup['user_id'] ?? 0),
+            'source_domain'            => (string) ($backup['source_domain'] ?? ''),
+            'profile_id'               => (string) ($backup['profile_id'] ?? ''),
+            'can_rollback'             => $expires && time() <= $expires,
+            'current_settings_changed' => $applied_hash !== '' && $current_hash !== '' && $current_hash !== $applied_hash,
+        ];
     }
 
     public function save_options() {
@@ -366,6 +405,12 @@ class SettingsController {
             }
             if ( isset( $settings['mode_0']['ai_files_module']['llms_txt_enabled'] ) ) {
                 $settings['mode_0']['ai_files_module']['llms_txt_enabled'] = false;
+            }
+            if ( isset( $settings['mode_0']['ai_files_module']['ai_policy_enabled'] ) ) {
+                $settings['mode_0']['ai_files_module']['ai_policy_enabled'] = false;
+            }
+            if ( isset( $settings['mode_0']['ai_files_module']['ai_policy_pointer_enabled'] ) ) {
+                $settings['mode_0']['ai_files_module']['ai_policy_pointer_enabled'] = false;
             }
             if ( isset( $settings['mode_0']['advanced_settings']['crawl_delay'] ) ) {
                 $settings['mode_0']['advanced_settings']['crawl_delay'] = 0;

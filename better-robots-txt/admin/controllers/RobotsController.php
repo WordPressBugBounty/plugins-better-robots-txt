@@ -14,6 +14,12 @@ use Pagup\BetterRobots\Core\Option;
 use Pagup\BetterRobots\Config\RobotsConfig;
 class RobotsController {
     /**
+     * Render paid-tier directives for non-persistent previews without changing
+     * the real license gates used by served robots.txt output.
+     */
+    private bool $forceProPreview = false;
+
+    /**
      * Constructor - hooks into WordPress
      */
     public function __construct() {
@@ -33,6 +39,7 @@ class RobotsController {
         }
         // Handle llms.txt virtual file
         add_action( 'template_redirect', [$this, 'serve_llms_txt'] );
+        add_action( 'template_redirect', [$this, 'serve_ai_policy'] );
         // Add SSA header links
         add_action( 'wp_head', [$this, 'add_ssa_header_links'] );
     }
@@ -68,8 +75,8 @@ class RobotsController {
         $mode0 = $settings['mode_0'];
         // Default to free-plan behavior in the free build. Premium code restores
         // the paid tiers from a premium-only block during deployment.
-        $isPremium = false;
-        $isPro = false;
+        $isPremium = $this->hasPremiumAccess();
+        $isPro = $this->hasProAccess();
         // Strip Premium-only features if not Premium
         if ( !$isPremium ) {
             // Step 5: Archive Control
@@ -126,6 +133,12 @@ class RobotsController {
             if ( isset( $mode0['ai_files_module']['llms_txt_enabled'] ) ) {
                 $mode0['ai_files_module']['llms_txt_enabled'] = false;
             }
+            if ( isset( $mode0['ai_files_module']['ai_policy_enabled'] ) ) {
+                $mode0['ai_files_module']['ai_policy_enabled'] = false;
+            }
+            if ( isset( $mode0['ai_files_module']['ai_policy_pointer_enabled'] ) ) {
+                $mode0['ai_files_module']['ai_policy_pointer_enabled'] = false;
+            }
             // Step 13: Advanced Settings (Crawl Delay)
             if ( isset( $mode0['advanced_settings']['crawl_delay'] ) ) {
                 $mode0['advanced_settings']['crawl_delay'] = 0;
@@ -160,6 +173,39 @@ class RobotsController {
             $output = rtrim( $output, "\n" ) . "\n\n" . ltrim( RobotsConfig::SSA_SIGNATURE, "\n" );
         }
         return $this->sanitize( $output );
+    }
+
+    /**
+     * Generate the robots.txt output a Pro user would get after applying.
+     *
+     * @param mixed $options
+     */
+    public function generateProPreview( $options = null ) : string {
+        $previous = $this->forceProPreview;
+        $this->forceProPreview = true;
+        try {
+            return $this->generate( $options );
+        } finally {
+            $this->forceProPreview = $previous;
+        }
+    }
+
+    private function isPremiumBuild() : bool {
+        return $this->forceProPreview || rtf_fs()->is__premium_only();
+    }
+
+    private function hasProAccess() : bool {
+        if ( $this->forceProPreview ) {
+            return true;
+        }
+        return rtf_fs()->is__premium_only() && rtf_fs()->is_plan_or_trial( 'betterrobotstxtpro' );
+    }
+
+    private function hasPremiumAccess() : bool {
+        if ( $this->forceProPreview ) {
+            return false;
+        }
+        return rtf_fs()->is__premium_only() && rtf_fs()->is_plan_or_trial( 'betterrobotstxtpremium', true );
     }
 
     /**
@@ -208,6 +254,23 @@ class RobotsController {
                 $allowBots[$bot] = $bot;
             }
         }
+        if ( $this->hasProAccess() && is_array( $customBots ) ) {
+            foreach ( $customBots as $botId => $state ) {
+                $bot = RobotsConfig::getGranularSearchEngineBot( $botId );
+                if ( !$bot ) {
+                    continue;
+                }
+                if ( $state === 'allow' ) {
+                    unset($disallowBots[$bot]);
+                    $allowBots[$bot] = $bot;
+                    continue;
+                }
+                if ( $state === 'disallow' ) {
+                    unset($allowBots[$bot]);
+                    $disallowBots[$bot] = $bot;
+                }
+            }
+        }
         $output = '';
         if ( !empty( $allowBots ) ) {
             $output .= RobotsConfig::generateAllowRules( array_values( $allowBots ), 'Search Engine Visibility' );
@@ -237,6 +300,56 @@ class RobotsController {
                 $disallowBots[$bot] = $bot;
             }
         }
+        if ( $this->isPremiumBuild() ) {
+            if ( $this->hasPremiumAccess() && ($settings['block_all_training_bots'] ?? false) ) {
+                foreach ( RobotsConfig::AI_TRAINING_BOTS as $bot ) {
+                    $disallowBots[$bot] = $bot;
+                }
+            }
+            $customBots = $settings['custom_bots'] ?? [];
+            if ( $this->hasProAccess() && is_array( $customBots ) ) {
+                if ( isset( $customBots['anthropicbot'] ) && !isset( $customBots['anthropic_ai'] ) ) {
+                    $customBots['anthropic_ai'] = $customBots['anthropicbot'];
+                }
+                unset($customBots['anthropicbot']);
+                foreach ( $customBots as $botId => $state ) {
+                    $bot = RobotsConfig::getMasterPlanAIBot( $botId );
+                    if ( !$bot ) {
+                        continue;
+                    }
+                    if ( $state === 'allow' ) {
+                        unset($disallowBots[$bot]);
+                        $allowBots[$bot] = $bot;
+                        continue;
+                    }
+                    if ( $state === 'disallow' ) {
+                        unset($allowBots[$bot]);
+                        $disallowBots[$bot] = $bot;
+                    }
+                }
+            }
+            $contentSignals = $settings['content_signals'] ?? [];
+            if ( $this->hasProAccess() && is_array( $contentSignals ) && !empty( $contentSignals['enabled'] ) && empty( $contentSignals['cloudflare_managed'] ) ) {
+                $signalPairs = [];
+                foreach ( ['search', 'ai_input', 'ai_train'] as $signalKey ) {
+                    $value = $contentSignals[$signalKey] ?? 'not-set';
+                    if ( !in_array( $value, ['yes', 'no'], true ) ) {
+                        continue;
+                    }
+                    $directive = str_replace( '_', '-', $signalKey );
+                    $signalPairs[] = "{$directive}={$value}";
+                }
+                if ( !empty( $signalPairs ) ) {
+                    $output .= "# AI Content Usage Signals\n";
+                    $output .= "User-agent: *\n";
+                    $output .= "Content-signal: " . implode( ',', $signalPairs ) . "\n\n";
+                }
+            }
+            $customCrawlers = $this->parseCustomUserAgents( $settings['custom_ai_crawlers'] ?? '' );
+            if ( $this->hasProAccess() && !empty( $customCrawlers ) ) {
+                $output .= RobotsConfig::generateDisallowRules( $customCrawlers, 'Custom AI Crawlers' );
+            }
+        }
         if ( !empty( $disallowBots ) ) {
             $output .= RobotsConfig::generateDisallowRules( array_values( $disallowBots ), 'AI Bot Restrictions' );
         }
@@ -247,12 +360,63 @@ class RobotsController {
     }
 
     /**
+     * Step 3b: AI governance files and policy pointer.
+     */
+    private function generate_ai_files_module( $settings ) {
+        if ( empty( $settings['ai_policy_enabled'] ) || empty( $settings['ai_policy_pointer_enabled'] ) ) {
+            return '';
+        }
+        if ( !$this->hasProAccess() ) {
+            return '';
+        }
+        $content = trim( (string) ($settings['ai_policy_content'] ?? '') );
+        if ( $content === '' ) {
+            return '';
+        }
+        $policyUrl = $this->getAIPolicyUrl( $settings );
+        if ( $policyUrl === '' ) {
+            return '';
+        }
+        return "# AI Usage Policy\n# ai-usage-policy: {$policyUrl}\n\n";
+    }
+
+    /**
      * Step 4: SEO Tool Protection
      */
     private function generate_seo_tools_module( $settings ) {
         $output = '';
         $allowBots = [];
         $disallowBots = [];
+        if ( $this->isPremiumBuild() ) {
+            if ( $this->hasProAccess() && ($settings['block_basic_tools'] ?? false) ) {
+                foreach ( RobotsConfig::SEO_TOOLS_BASIC as $bot ) {
+                    $disallowBots[$bot] = $bot;
+                }
+            }
+            if ( $this->hasPremiumAccess() && ($settings['block_extra_tools'] ?? false) ) {
+                foreach ( RobotsConfig::SEO_TOOLS_EXTRA as $bot ) {
+                    $disallowBots[$bot] = $bot;
+                }
+            }
+            $customBots = $settings['custom_bots'] ?? [];
+            if ( $this->hasProAccess() && is_array( $customBots ) ) {
+                foreach ( $customBots as $botId => $state ) {
+                    $bot = RobotsConfig::getMasterPlanSEOBot( $botId );
+                    if ( !$bot ) {
+                        continue;
+                    }
+                    if ( $state === 'allow' ) {
+                        unset($disallowBots[$bot]);
+                        $allowBots[$bot] = $bot;
+                        continue;
+                    }
+                    if ( $state === 'disallow' ) {
+                        unset($allowBots[$bot]);
+                        $disallowBots[$bot] = $bot;
+                    }
+                }
+            }
+        }
         if ( !empty( $disallowBots ) ) {
             $output .= RobotsConfig::generateDisallowRules( array_values( $disallowBots ), 'SEO Tool Restrictions' );
         }
@@ -271,6 +435,10 @@ class RobotsController {
         }
         $bots = RobotsConfig::MASTER_PLAN_BAD_BOTS_BASIC;
         $comment = 'Bot & Scraper Protection (Basic List)';
+        if ( $this->hasProAccess() && !empty( $settings['use_full_list'] ) ) {
+            $bots = RobotsConfig::MASTER_PLAN_BAD_BOTS_FULL;
+            $comment = 'Bot & Scraper Protection (Full AI-Curated List)';
+        }
         return RobotsConfig::generateDisallowRules( $bots, $comment );
     }
 
@@ -281,6 +449,9 @@ class RobotsController {
         if ( ($settings['policy'] ?? '') !== 'block' ) {
             return '';
         }
+        if ( $this->hasPremiumAccess() ) {
+            return RobotsConfig::generateDisallowRules( RobotsConfig::ARCHIVE_BOTS, 'Block Archive Services' );
+        }
         return '';
     }
 
@@ -289,6 +460,9 @@ class RobotsController {
      */
     private function generate_spam_feeds_module( $settings ) {
         $output = '';
+        if ( $this->hasProAccess() && ($settings['block_feeds_spam'] ?? false) ) {
+            $output .= RobotsConfig::generatePathDisallowRules( RobotsConfig::FEED_PATHS, 'Block RSS/Atom Feeds' );
+        }
         if ( $settings['block_author_archives'] ?? false ) {
             $output .= RobotsConfig::generatePathDisallowRules( RobotsConfig::AUTHOR_PATHS, 'Block Author Archives' );
         }
@@ -313,6 +487,9 @@ class RobotsController {
         $output = '';
         if ( $level === 'basic_cleanup' || $level === 'advanced_cleanup' ) {
             $output .= RobotsConfig::generatePathDisallowRules( RobotsConfig::ECOMMERCE_BASIC_PATHS, 'E-commerce Basic Cleanup' );
+        }
+        if ( $this->hasProAccess() && $level === 'advanced_cleanup' ) {
+            $output .= RobotsConfig::generatePathDisallowRules( RobotsConfig::ECOMMERCE_ADVANCED_PATTERNS, 'E-commerce Advanced Cleanup' );
         }
         return $output;
     }
@@ -385,6 +562,12 @@ class RobotsController {
      */
     private function generate_advanced_settings( $settings ) {
         $output = '';
+        if ( $this->hasProAccess() ) {
+            $crawlDelay = $settings['crawl_delay'] ?? 0;
+            if ( $crawlDelay > 0 ) {
+                $output .= "Crawl-delay: {$crawlDelay}\n\n";
+            }
+        }
         // Custom Rules
         if ( !empty( $settings['custom_rules'] ) ) {
             $customRules = $this->sanitizeCustomRules( $settings['custom_rules'] );
@@ -470,6 +653,46 @@ class RobotsController {
         if ( $path !== 'llms.txt' ) {
             return;
         }
+    }
+
+    public function serve_ai_policy() {
+        if ( is_admin() ) {
+            return;
+        }
+        if ( !rtf_fs()->is__premium_only() || !rtf_fs()->is_plan_or_trial( 'betterrobotstxtpro' ) ) {
+            return;
+        }
+        $settings = Option::all();
+        $aiFiles = $settings['mode_0']['ai_files_module'] ?? [];
+        if ( !is_array( $aiFiles ) || empty( $aiFiles['ai_policy_enabled'] ) ) {
+            return;
+        }
+        $slug = sanitize_title( (string) ($aiFiles['ai_policy_slug'] ?? 'ai-usage-policy') );
+        if ( $slug === '' ) {
+            $slug = 'ai-usage-policy';
+        }
+        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $parsed_url = parse_url( $request_uri );
+        $path = trim( $parsed_url['path'] ?? '', '/' );
+        $policyPath = trim( (string) parse_url( $this->getAIPolicyUrl( $aiFiles ), PHP_URL_PATH ), '/' );
+        if ( $path !== $slug && $path !== $policyPath ) {
+            return;
+        }
+        $content = trim( (string) ($aiFiles['ai_policy_content'] ?? '') );
+        if ( $content === '' ) {
+            return;
+        }
+        if ( ob_get_level() ) {
+            ob_end_clean();
+        }
+        status_header( 200 );
+        header( 'Content-Type: text/html; charset=utf-8' );
+        nocache_headers();
+        $title = esc_html__( 'AI Usage Policy', 'better-robots-txt' );
+        echo "<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{$title}</title></head><body>";
+        echo wp_kses_post( wpautop( $content ) );
+        echo "</body></html>";
+        exit;
     }
 
     /**
@@ -579,6 +802,14 @@ class RobotsController {
         $content = preg_replace( '/[^\\x20-\\x7E\\r\\n\\t]/', '', wp_unslash( $content ) );
         $content = str_replace( ["\r\n", "\r"], "\n", $content );
         return trim( (string) $content );
+    }
+
+    private function getAIPolicyUrl( $settings ) {
+        $slug = sanitize_title( (string) ($settings['ai_policy_slug'] ?? 'ai-usage-policy') );
+        if ( $slug === '' ) {
+            $slug = 'ai-usage-policy';
+        }
+        return home_url( '/' . $slug );
     }
 
     /**

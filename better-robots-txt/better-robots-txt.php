@@ -2,9 +2,9 @@
 
 /*
 * Plugin Name: Better Robots.txt - AI-Ready Crawl Control & Bot Governance
-* Description: Better-Robots.txt plugin helps you boosting your website indexation and your ranking by adding specific instructions in your robots.txt
+* Description: Better Robots.txt helps you manage robots.txt, crawler access preferences, AI crawler governance signals, and machine-readable guidance files for WordPress. It does not guarantee ranking, indexing, citation, or crawler compliance.
 * Author: Pagup
-* Version: 3.0.1
+* Version: 3.1.0
 * Author URI: https://pagup.com/
 * Text Domain: better-robots-txt
 * Domain Path: /languages/

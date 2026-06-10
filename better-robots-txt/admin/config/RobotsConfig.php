@@ -34,6 +34,7 @@ class RobotsConfig
         'global_settings',          // Step 1: Global Settings (Sitemaps)
         'search_engine_module',     // Step 2: Search Engine Visibility
         'ai_module',                // Step 3: AI & LLM Governance
+        'ai_files_module',          // Step 3b: AI governance files and policy pointer
         'seo_tools_module',         // Step 4: SEO Tool Protection
         'bad_bots_module',          // Step 5: Bot & Scraper Protection
         'archive_module',           // Step 6: Archive & Wayback Control
@@ -618,6 +619,7 @@ class RobotsConfig
         'claudebot'                => 'ClaudeBot',
         'claude_searchbot'         => 'Claude-SearchBot',    // NOTE: Confirm exact UA
         'claude_user'              => 'Claude-User',          // NOTE: Confirm exact UA
+        'anthropic_ai'             => 'anthropic-ai',
 
         // Perplexity
         'perplexitybot'            => 'PerplexityBot',
@@ -642,12 +644,16 @@ class RobotsConfig
         // Huawei / Asia
         'petalbot'                 => 'PetalBot',
         'pangubot'                 => 'PanguBot',             // NOTE: Confirm if officially documented
+        'bytespider'               => 'Bytespider',
 
         // You.com
         'youbot'                   => 'YouBot',
 
         // Cohere
         'cohere_ai'                => 'cohere-ai',
+
+        // xAI
+        'grokbot'                  => 'Grokbot',
 
         // Open Data / Research
         'ccbot'                    => 'CCBot',                // CommonCrawl

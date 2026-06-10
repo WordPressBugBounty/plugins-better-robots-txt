@@ -3,8 +3,8 @@ Contributors: pagup, the-rock, freemius
 Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 6.9
-Stable tag: 3.0.1
+Tested up to: 7.0
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -548,3 +548,8 @@ Digital readability is the capacity of a website to be correctly understood by a
 = 3.0.1 =
 * 🐛 FIX: Removed Push notification popup during freemius opt-in.
 * 👌 IMPROVE: Update Freemius to v2.13.1
+
+= 3.1.0 =
+* 🔥 NEW: Pro workflow to apply /check audit recommendations from better-robots-config JSON files.
+* 🔥 NEW: Preview, backup, import history, and 7-day rollback for audit recommendation imports.
+* 👌 IMPROVE: Add canonical anthropic-ai mapping for granular AI crawler controls.

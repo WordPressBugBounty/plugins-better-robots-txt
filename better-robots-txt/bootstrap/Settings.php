@@ -4,6 +4,7 @@ namespace Pagup\BetterRobots\Bootstrap;
 
 use Pagup\BetterRobots\Controllers\SettingsController;
 use Pagup\BetterRobots\Controllers\MetaboxController;
+use Pagup\BetterRobots\Controllers\ImportController;
 use Pagup\BetterRobots\Core\Asset;
 use Pagup\BetterRobots\Traits\ErrorHandler;
 class Settings {
@@ -13,6 +14,8 @@ class Settings {
     private const ERROR_PREFIX = 'Better Robots.txt';
 
     private SettingsController $settingsController;
+
+    private ImportController $importController;
 
     /**
      * Premium-only controller. The free build strips both the file and the hooks.
@@ -35,6 +38,7 @@ class Settings {
      */
     private function initializeControllers() : void {
         $this->settingsController = new SettingsController();
+        $this->importController = new ImportController();
     }
 
     /**
@@ -63,6 +67,10 @@ class Settings {
         $this->addAjaxAction( 'rt__preview', [$this->settingsController, 'preview_options'] );
         $this->addAjaxAction( 'rt__onboarding', [$this->settingsController, 'onboarding'] );
         $this->addAjaxAction( 'rt__delete_physical_file', [$this->settingsController, 'delete_physical_file'] );
+        $this->addAjaxAction( 'rt__import_validate', [$this->importController, 'validate_config'] );
+        $this->addAjaxAction( 'rt__import_preview', [$this->importController, 'preview_config'] );
+        $this->addAjaxAction( 'rt__import_apply', [$this->importController, 'apply_config'] );
+        $this->addAjaxAction( 'rt__import_rollback', [$this->importController, 'rollback_config'] );
     }
 
     /**
@@ -137,14 +145,14 @@ class Settings {
     private function enqueue_development_assets() : void {
         Asset::script_remote(
             'robots__client',
-            'http://172.31.36.77:3213/@vite/client',
+            'http://localhost:3213/@vite/client',
             [],
             true,
             true
         );
         Asset::script_remote(
             'robots__main',
-            'http://172.31.36.77:3213/src/main.ts',
+            'http://localhost:3213/src/main.ts',
             [],
             true,
             true
