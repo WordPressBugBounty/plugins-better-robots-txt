@@ -4,7 +4,7 @@ Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -274,6 +274,9 @@ Digital readability is the capacity of a website to be correctly understood by a
 8. Step 14 - Review & Save preview screen.
 
 == Changelog ==
+
+= 3.1.1 =
+* Improve admin UI translations and locale detection, and remove external Google Fonts from the admin bundle.
 
 = 1.0.0 =
 * Initial release.
