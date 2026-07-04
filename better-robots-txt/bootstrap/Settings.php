@@ -47,6 +47,7 @@ class Settings {
     private function registerHooks() : void {
         // Menu and Assets
         add_action( 'admin_menu', [$this->settingsController, 'add_settings'] );
+        add_action( 'admin_notices', [$this->settingsController, 'display_ai_search_policy_review_notice'] );
         add_action( 'admin_enqueue_scripts', [$this, 'assets'], 999 );
         // Plugin Settings
         add_filter( "plugin_action_links_" . ROBOTS_PLUGIN_BASE, [$this, 'setting_link'] );
@@ -67,6 +68,7 @@ class Settings {
         $this->addAjaxAction( 'rt__preview', [$this->settingsController, 'preview_options'] );
         $this->addAjaxAction( 'rt__onboarding', [$this->settingsController, 'onboarding'] );
         $this->addAjaxAction( 'rt__delete_physical_file', [$this->settingsController, 'delete_physical_file'] );
+        $this->addAjaxAction( 'rt__ai_search_policy_review', [$this->settingsController, 'handle_ai_search_policy_review'] );
         $this->addAjaxAction( 'rt__import_validate', [$this->importController, 'validate_config'] );
         $this->addAjaxAction( 'rt__import_preview', [$this->importController, 'preview_config'] );
         $this->addAjaxAction( 'rt__import_apply', [$this->importController, 'apply_config'] );

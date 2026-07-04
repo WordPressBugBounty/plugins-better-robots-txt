@@ -40,6 +40,7 @@ class RobotsController {
         // Handle llms.txt virtual file
         add_action( 'template_redirect', [$this, 'serve_llms_txt'] );
         add_action( 'template_redirect', [$this, 'serve_ai_policy'] );
+        add_action( 'template_redirect', [$this, 'serve_ai_governance_json'] );
         // Add SSA header links
         add_action( 'wp_head', [$this, 'add_ssa_header_links'] );
     }
@@ -98,9 +99,6 @@ class RobotsController {
                 $mode0['global_settings']['sitemaps']['auto_detect_sitemap'] = false;
             }
             // Step 2: AI Module (Content Signals, Custom Crawlers)
-            if ( isset( $mode0['ai_module']['ai_search_policy'] ) ) {
-                $mode0['ai_module']['ai_search_policy'] = 'block_all';
-            }
             if ( isset( $mode0['ai_module']['content_signals']['enabled'] ) ) {
                 $mode0['ai_module']['content_signals']['enabled'] = false;
             }
@@ -647,7 +645,7 @@ class RobotsController {
     }
 
     public function serve_llms_txt() {
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
         $parsed_url = parse_url( $request_uri );
         $path = trim( $parsed_url['path'] ?? '', '/' );
         if ( $path !== 'llms.txt' ) {
@@ -696,6 +694,39 @@ class RobotsController {
     }
 
     /**
+     * Serve a local governance pointer when the user explicitly enables AI
+     * governance links. This file is declarative only; it does not claim crawler
+     * enforcement.
+     */
+    public function serve_ai_governance_json() {
+        if ( is_admin() ) {
+            return;
+        }
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+        $parsed_url = parse_url( $request_uri );
+        $path = trim( $parsed_url['path'] ?? '', '/' );
+        if ( $path !== '.well-known/ai-governance.json' ) {
+            return;
+        }
+        $settings = Option::all();
+        if ( !is_array( $settings ) ) {
+            return;
+        }
+        $enabled = $settings['mode_0']['global_settings']['ssa_header_links']['enabled'] ?? false;
+        if ( !$enabled ) {
+            return;
+        }
+        if ( ob_get_level() ) {
+            ob_end_clean();
+        }
+        status_header( 200 );
+        header( 'Content-Type: application/json; charset=utf-8' );
+        nocache_headers();
+        echo wp_json_encode( $this->buildAIGovernancePointer( $settings ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+        exit;
+    }
+
+    /**
      * Add interpretive-governance header links if enabled
      */
     public function add_ssa_header_links() {
@@ -704,11 +735,61 @@ class RobotsController {
             return;
         }
         $settings = Option::all();
+        if ( !is_array( $settings ) ) {
+            return;
+        }
         $enabled = $settings['mode_0']['global_settings']['ssa_header_links']['enabled'] ?? false;
         if ( $enabled ) {
-            echo '<link rel="alternate" type="text/plain" href="/robots.txt" title="Site crawl policy (robots.txt)" />' . "\n";
+            echo '<link rel="alternate" type="text/plain" href="' . esc_url( home_url( '/robots.txt' ) ) . '" title="Site crawl policy (robots.txt)" />' . "\n";
+            echo '<link rel="alternate" type="application/json" href="' . esc_url( home_url( '/.well-known/ai-governance.json' ) ) . '" title="Site AI governance pointer" />' . "\n";
             echo '<link rel="help" href="https://interpretive-governance.org/" title="Interpretive Governance reference (SSA-E) for Better Robots.txt" />' . "\n";
         }
+    }
+
+    /**
+     * Build the public JSON pointer for machine-readable governance surfaces.
+     *
+     * @param mixed $settings
+     * @return array<string, mixed>
+     */
+    private function buildAIGovernancePointer( $settings ) {
+        $settings = is_array( $settings ) ? $settings : [];
+        $aiFiles = $settings['mode_0']['ai_files_module'] ?? [];
+        $surfaces = [
+            [
+                'id'          => 'robots_txt',
+                'url'         => home_url( '/robots.txt' ),
+                'status'      => 'available',
+                'description' => 'Crawler directives and site crawl preferences.',
+            ],
+        ];
+        if ( $this->hasProAccess() && !empty( $aiFiles['llms_txt_enabled'] ) && trim( (string) ($aiFiles['llms_txt_content'] ?? '') ) !== '' ) {
+            $surfaces[] = [
+                'id'          => 'llms_txt',
+                'url'         => home_url( '/llms.txt' ),
+                'status'      => 'available',
+                'description' => 'Optional machine-readable guidance for AI and LLM systems.',
+            ];
+        }
+        if ( $this->hasProAccess() && !empty( $aiFiles['ai_policy_enabled'] ) && trim( (string) ($aiFiles['ai_policy_content'] ?? '') ) !== '' ) {
+            $surfaces[] = [
+                'id'          => 'ai_usage_policy',
+                'url'         => $this->getAIPolicyUrl( $aiFiles ),
+                'status'      => 'available',
+                'description' => 'Human-readable AI usage policy page managed by the site owner.',
+            ];
+        }
+        return [
+            'schema_version' => 'pagup-ai-governance-pointer-v0.1',
+            'site_url'       => home_url( '/' ),
+            'generated_by'   => 'Better Robots.txt',
+            'surfaces'       => $surfaces,
+            'limitations'    => [
+                'robots.txt, llms.txt, and governance pointers express site owner preferences.',
+                'Crawler compliance depends on each crawler or AI system.',
+                'This file does not guarantee ranking, indexing, citation, or crawler compliance.',
+            ],
+        ];
     }
 
     /**

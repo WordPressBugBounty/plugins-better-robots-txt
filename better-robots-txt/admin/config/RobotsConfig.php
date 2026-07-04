@@ -204,74 +204,98 @@ class RobotsConfig
     // =========================================================================
 
     /**
-     * AI Training Bots - These scrape content to train AI models
-     *
-     * COMPREHENSIVE LIST - Updated 2024/2025
-     * These bots collect data specifically for AI model training
+     * AI Training Bots - crawlers or control tokens associated with model training
+     * and large-scale AI dataset collection.
      */
     const AI_TRAINING_BOTS = [
-        // OpenAI
-        'GPTBot',               // OpenAI's official training crawler
-        'OAI-SearchBot',        // OpenAI search feature
-
-        // Google AI
-        'Google-Extended',      // Google AI training (Bard/Gemini) - respects robots.txt
-
-        // Anthropic
-        'anthropic-ai',         // Anthropic's crawler
-        'ClaudeBot',            // Claude's web crawler
-        'Claude-Web',           // Claude web access
-
-        // Meta/Facebook
-        'FacebookBot',          // Meta AI training
-        'Meta-ExternalAgent',   // Meta's external AI agent
-        'Meta-ExternalFetcher', // Meta content fetcher
-
-        // ByteDance/TikTok
-        'Bytespider',           // ByteDance AI crawler
-
-        // Apple
-        'Applebot-Extended',    // Apple AI training (separate from search)
-
-        // Microsoft
-        'Bingbot-AI',           // Microsoft AI training variant
-
-        // Other AI Companies
-        'cohere-ai',            // Cohere AI training
-        'Diffbot',              // AI content extraction service
-        'Omgilibot',            // Omgili content aggregator
-        'img2dataset',          // Image dataset collection
-
-        // Common Crawl (used by many AI companies)
-        'CCBot',                // Common Crawl bot
-
-        // AI Research & Training Crawlers
-        'Kangaroo Bot',         // AI training crawler
-        'PanguBot',             // Huawei AI training
-        'Sidetrade indexer',    // B2B AI company
-        'webz.io',              // Data-as-a-service for AI
-        'Scrapy',               // Generic scraper often used for AI
-        'Timpibot',             // Timpi AI search/training
-
-        // Perplexity (both training and search)
-        'PerplexityBot',        // Perplexity AI
+        'GPTBot',
+        'Google-Extended',
+        'anthropic-ai',
+        'ClaudeBot',
+        'Claude-Web',
+        'FacebookBot',
+        'Meta-ExternalAgent',
+        'Meta-ExternalFetcher',
+        'Bytespider',
+        'Applebot-Extended',
+        'Bingbot-AI',
+        'cohere-ai',
+        'Diffbot',
+        'Omgilibot',
+        'img2dataset',
+        'CCBot',
+        'AI2Bot',
+        'Kangaroo Bot',
+        'PanguBot',
+        'Sidetrade indexer',
+        'webz.io',
+        'Scrapy',
+        'Timpibot',
+        'Grokbot',
     ];
 
     /**
-     * AI Search Engine Bots - These power AI-driven search results
-     *
-     * block_all_ai_search = block these
-     * allow_ai_search = don't block (no rules generated)
+     * AI Search Engine Bots - crawlers used for search, answer discovery, or
+     * AI search indexes. Free users can now allow these while blocking training.
      */
     const AI_SEARCH_BOTS = [
-        'PerplexityBot',        // Perplexity AI search
-        'YouBot',               // You.com AI search
-        'ChatGPT-User',         // ChatGPT with browsing capability
-        'Amazonbot',            // Amazon Alexa/search integration
-        'OAI-SearchBot',        // OpenAI's SearchGPT
-        'AI2Bot',               // Allen AI search
-        'Applebot',             // Apple search (used in Siri)
-        'PhindBot',             // Phind AI developer search
+        'OAI-SearchBot',
+        'PerplexityBot',
+        'Claude-SearchBot',
+        'Applebot',
+        'YouBot',
+        'PhindBot',
+        'Amazonbot',
+    ];
+
+    /**
+     * User-action fetchers are triggered by a human request inside an AI product.
+     * They are separated from search indexes because blocking them often breaks
+     * user-requested retrieval rather than passive crawling.
+     */
+    const AI_USER_ACTION_BOTS = [
+        'ChatGPT-User',
+        'Perplexity-User',
+        'Claude-User',
+        'MistralAI-User',
+    ];
+
+    /**
+     * Registry used to keep the operational taxonomy explicit.
+     */
+    const AI_BOT_REGISTRY = [
+        'gptbot'                => ['user_agent' => 'GPTBot', 'category' => 'training'],
+        'oai_searchbot'         => ['user_agent' => 'OAI-SearchBot', 'category' => 'search_discovery'],
+        'chatgpt_user'          => ['user_agent' => 'ChatGPT-User', 'category' => 'user_action'],
+        'claudebot'             => ['user_agent' => 'ClaudeBot', 'category' => 'training'],
+        'claude_web'            => ['user_agent' => 'Claude-Web', 'category' => 'training'],
+        'claude_searchbot'      => ['user_agent' => 'Claude-SearchBot', 'category' => 'search_discovery'],
+        'claude_user'           => ['user_agent' => 'Claude-User', 'category' => 'user_action'],
+        'anthropic_ai'          => ['user_agent' => 'anthropic-ai', 'category' => 'training'],
+        'perplexitybot'         => ['user_agent' => 'PerplexityBot', 'category' => 'search_discovery'],
+        'perplexity_user'       => ['user_agent' => 'Perplexity-User', 'category' => 'user_action'],
+        'mistralai_user'        => ['user_agent' => 'MistralAI-User', 'category' => 'user_action'],
+        'google_extended'       => ['user_agent' => 'Google-Extended', 'category' => 'training'],
+        'google_cloudvertexbot' => ['user_agent' => 'Google-CloudVertexBot', 'category' => 'ai_platform'],
+        'meta_externalagent'    => ['user_agent' => 'Meta-ExternalAgent', 'category' => 'training'],
+        'meta_externalfetcher'  => ['user_agent' => 'Meta-ExternalFetcher', 'category' => 'training'],
+        'facebookbot'           => ['user_agent' => 'FacebookBot', 'category' => 'training'],
+        'applebot'              => ['user_agent' => 'Applebot', 'category' => 'search_discovery'],
+        'applebot_extended'     => ['user_agent' => 'Applebot-Extended', 'category' => 'training'],
+        'bingbot_ai'            => ['user_agent' => 'Bingbot-AI', 'category' => 'training'],
+        'amazonbot'             => ['user_agent' => 'Amazonbot', 'category' => 'search_discovery'],
+        'petalbot'              => ['user_agent' => 'PetalBot', 'category' => 'search_discovery'],
+        'pangubot'              => ['user_agent' => 'PanguBot', 'category' => 'training'],
+        'bytespider'            => ['user_agent' => 'Bytespider', 'category' => 'training'],
+        'youbot'                => ['user_agent' => 'YouBot', 'category' => 'search_discovery'],
+        'cohere_ai'             => ['user_agent' => 'cohere-ai', 'category' => 'training'],
+        'grokbot'               => ['user_agent' => 'Grokbot', 'category' => 'training'],
+        'ccbot'                 => ['user_agent' => 'CCBot', 'category' => 'training'],
+        'ai2bot'                => ['user_agent' => 'AI2Bot', 'category' => 'training'],
+        'diffbot'               => ['user_agent' => 'Diffbot', 'category' => 'training'],
+        'img2dataset'           => ['user_agent' => 'img2dataset', 'category' => 'training'],
+        'timpibot'              => ['user_agent' => 'TimpiBot', 'category' => 'training'],
+        'omgili'                => ['user_agent' => 'omgili', 'category' => 'training'],
     ];
 
     // =========================================================================
@@ -617,6 +641,7 @@ class RobotsConfig
 
         // Anthropic (Claude)
         'claudebot'                => 'ClaudeBot',
+        'claude_web'               => 'Claude-Web',
         'claude_searchbot'         => 'Claude-SearchBot',    // NOTE: Confirm exact UA
         'claude_user'              => 'Claude-User',          // NOTE: Confirm exact UA
         'anthropic_ai'             => 'anthropic-ai',
@@ -634,12 +659,18 @@ class RobotsConfig
 
         // Meta
         'meta_externalagent'       => 'Meta-ExternalAgent',   // NOTE: Confirm capitalization
+        'meta_externalfetcher'     => 'Meta-ExternalFetcher',
+        'facebookbot'              => 'FacebookBot',
 
         // Apple
+        'applebot'                 => 'Applebot',
         'applebot_extended'        => 'Applebot-Extended',
 
         // Amazon
         'amazonbot'                => 'Amazonbot',
+
+        // Microsoft
+        'bingbot_ai'               => 'Bingbot-AI',
 
         // Huawei / Asia
         'petalbot'                 => 'PetalBot',
@@ -659,6 +690,7 @@ class RobotsConfig
         'ccbot'                    => 'CCBot',                // CommonCrawl
         'ai2bot'                   => 'AI2Bot',               // Allen Institute
         'diffbot'                  => 'Diffbot',
+        'img2dataset'              => 'img2dataset',
         'timpibot'                 => 'TimpiBot',             // NOTE: Confirm capitalization (Timpibot?)
         'omgili'                   => 'omgili',
     ];
@@ -1119,6 +1151,26 @@ class RobotsConfig
     public static function getAISearchBots()
     {
         return self::AI_SEARCH_BOTS;
+    }
+
+    /**
+     * Get all AI user-action fetchers.
+     *
+     * @return array Array of bot names
+     */
+    public static function getAIUserActionBots()
+    {
+        return self::AI_USER_ACTION_BOTS;
+    }
+
+    /**
+     * Get the AI bot taxonomy registry.
+     *
+     * @return array<string, array<string, string>>
+     */
+    public static function getAIBotRegistry()
+    {
+        return self::AI_BOT_REGISTRY;
     }
 
     /**

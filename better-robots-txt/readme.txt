@@ -4,7 +4,7 @@ Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 3.1.1
+Stable tag: 3.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,20 @@ Better Robots.txt is available in three editions:
 - Premium - Unlocks the most restrictive and advanced protection options, including the Fortress preset and additional high-control modules.
 
 Some options shown in the interface are marked Free, Pro, or Premium so users can immediately understand which modules belong to each edition.
+
+## AI crawler controls by edition
+
+The Free edition lets site owners choose a basic global policy for AI search and discovery crawlers: allow or block. AI training crawlers remain separated from AI search crawlers, so a site can block training use while still allowing AI-powered search and answer discovery.
+
+The Pro and Premium editions add advanced controls, including per-bot AI crawler rules, custom user agents, AI usage signals, llms.txt, and additional machine-readable governance files.
+
+Better Robots.txt separates AI-related agents into three practical families:
+
+- AI training crawlers, such as GPTBot, Google-Extended, and ClaudeBot.
+- AI search and discovery crawlers, such as OAI-SearchBot, PerplexityBot, and Claude-SearchBot.
+- User-action fetchers, such as ChatGPT-User, Perplexity-User, and Claude-User.
+
+User-action fetchers are triggered by user requests. Depending on the provider, robots.txt may not apply to those fetches in the same way as it applies to automated crawlers. For stronger enforcement, combine robots.txt with server logs, WAF rules, provider verification, or IP-based controls where available.
 
 ## Presets
 
@@ -274,6 +288,18 @@ Digital readability is the capacity of a website to be correctly understood by a
 8. Step 14 - Review & Save preview screen.
 
 == Changelog ==
+
+= 3.1.2 =
+* Fixed Free edition AI Search policy handling so the global allow/block choice is respected during preview, save, and robots.txt generation.
+* Updated the default AI posture to block AI training crawlers while allowing AI search and discovery crawlers.
+* Rebuilt AI crawler classification around training, search/discovery, and user-action fetchers.
+* Added Claude-SearchBot, Claude-User, and Perplexity-User handling in the operational AI crawler taxonomy.
+* Corrected OAI-SearchBot and PerplexityBot classification so they are not treated as training crawlers.
+* Corrected ChatGPT-User classification so it is treated as a user-action fetcher, not an AI search crawler.
+* Corrected AI2Bot classification so it is treated as data, training, and research collection, not AI search.
+* Added a one-time admin notice for existing Free installs whose AI Search policy may have been forced to block_all by earlier 3.x behavior.
+* Improved Free/Pro/Premium UI labels for AI crawler controls.
+* Fixed package version metadata for 3.1.2.
 
 = 3.1.1 =
 * Improve admin UI translations and locale detection, and remove external Google Fonts from the admin bundle.

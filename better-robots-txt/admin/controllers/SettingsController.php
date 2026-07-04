@@ -8,6 +8,12 @@ use Pagup\BetterRobots\Traits\RobotsHelper;
 use Pagup\BetterRobots\Traits\SettingHelper;
 class SettingsController {
     use RobotsHelper, SettingHelper, Sitemap;
+    private const AI_SEARCH_NOTICE_ACTIONED_OPTION = 'better_robots_312_ai_search_notice_actioned';
+
+    private const AI_SEARCH_NOTICE_ACTION_OPTION = 'better_robots_312_ai_search_notice_action';
+
+    private const AI_SEARCH_NOTICE_TIMESTAMP_OPTION = 'better_robots_312_ai_search_notice_at';
+
     protected $yoast_sitemap_url = '';
 
     protected $xml_sitemap_url = '';
@@ -77,6 +83,90 @@ class SettingsController {
             echo $this->devNotification();
         }
         echo '<div id="rt__app"></div>';
+    }
+
+    /**
+     * Surface a one-time review path for Free sites affected by the 3.1.1 AI Search lock.
+     */
+    public function display_ai_search_policy_review_notice() {
+        if ( !$this->should_display_ai_search_policy_review_notice() ) {
+            return;
+        }
+
+        $settings_url = admin_url( 'admin.php?page=better-robots-txt' );
+        $action_url = admin_url( 'admin-ajax.php' );
+        echo '<div class="notice notice-warning">';
+        echo '<p><strong>' . esc_html__( 'Better Robots.txt:', 'better-robots-txt' ) . '</strong> ' . esc_html__( 'Version 3.1.2 restores the Free AI Search choice. Your current settings block AI search and discovery bots, likely because version 3.1.1 forced that value.', 'better-robots-txt' ) . '</p>';
+        echo '<p>' . esc_html__( 'Review the setting before publishing your next robots.txt change, or allow AI search/discovery now while keeping AI training protection enabled.', 'better-robots-txt' ) . '</p>';
+        echo '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0;">';
+        echo '<a class="button button-secondary" href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Review settings', 'better-robots-txt' ) . '</a> ';
+        echo '<form method="post" action="' . esc_url( $action_url ) . '" style="display:inline-block;margin:0;">';
+        echo '<input type="hidden" name="action" value="rt__ai_search_policy_review" />';
+        wp_nonce_field( 'rt__ai_search_policy_review', 'nonce', true );
+        echo '<button type="submit" class="button button-primary" name="ai_search_review_action" value="allow_search">' . esc_html__( 'Allow AI search now', 'better-robots-txt' ) . '</button>';
+        echo '</form> ';
+        echo '<form method="post" action="' . esc_url( $action_url ) . '" style="display:inline-block;margin:0;">';
+        echo '<input type="hidden" name="action" value="rt__ai_search_policy_review" />';
+        wp_nonce_field( 'rt__ai_search_policy_review', 'nonce', true );
+        echo '<button type="submit" class="button" name="ai_search_review_action" value="keep_blocked">' . esc_html__( 'Keep AI search blocked', 'better-robots-txt' ) . '</button>';
+        echo '</form>';
+        echo '</div>';
+        echo '</div>';
+    }
+
+    public function handle_ai_search_policy_review() {
+        if ( check_ajax_referer( 'rt__ai_search_policy_review', 'nonce', false ) === false ) {
+            wp_die( esc_html__( 'Invalid nonce.', 'better-robots-txt' ), 403 );
+        }
+
+        if ( !current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'Unauthorized user.', 'better-robots-txt' ), 403 );
+        }
+
+        $action = isset( $_POST['ai_search_review_action'] ) ? sanitize_key( wp_unslash( $_POST['ai_search_review_action'] ) ) : '';
+        if ( $action === 'allow_search' ) {
+            $settings = Option::all();
+            if ( is_array( $settings ) && ($settings['settings_version'] ?? '') === '3.0' ) {
+                if ( !isset( $settings['mode_0']['ai_module'] ) || !is_array( $settings['mode_0']['ai_module'] ) ) {
+                    $settings['mode_0']['ai_module'] = [];
+                }
+                $settings['mode_0']['ai_module']['ai_search_policy'] = 'allow_all';
+                $settings['mode_0']['ai_module']['ai_training_protection'] = true;
+                update_option( 'robots_txt', $settings );
+            }
+            $this->record_ai_search_policy_review_action( 'allow_search' );
+        } elseif ( $action === 'keep_blocked' ) {
+            $this->record_ai_search_policy_review_action( 'keep_blocked' );
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=better-robots-txt' ) );
+        exit;
+    }
+
+    private function should_display_ai_search_policy_review_notice() {
+        if ( !current_user_can( 'manage_options' ) || $this->has_paid_ai_search_access() ) {
+            return false;
+        }
+        if ( get_option( self::AI_SEARCH_NOTICE_ACTIONED_OPTION ) ) {
+            return false;
+        }
+
+        $settings = Option::all();
+        if ( !is_array( $settings ) || ($settings['settings_version'] ?? '') !== '3.0' ) {
+            return false;
+        }
+
+        return ($settings['mode_0']['ai_module']['ai_search_policy'] ?? '') === 'block_all';
+    }
+
+    private function has_paid_ai_search_access() {
+        return false;
+    }
+
+    private function record_ai_search_policy_review_action( $action ) {
+        update_option( self::AI_SEARCH_NOTICE_ACTIONED_OPTION, true );
+        update_option( self::AI_SEARCH_NOTICE_ACTION_OPTION, sanitize_key( $action ) );
+        update_option( self::AI_SEARCH_NOTICE_TIMESTAMP_OPTION, current_time( 'mysql', true ) );
     }
 
     /**
@@ -393,9 +483,6 @@ class SettingsController {
             }
             if ( isset( $settings['mode_0']['robotstxt_infrastructure']['file_mode'] ) ) {
                 $settings['mode_0']['robotstxt_infrastructure']['file_mode'] = 'virtual_robotstxt';
-            }
-            if ( isset( $settings['mode_0']['ai_module']['ai_search_policy'] ) ) {
-                $settings['mode_0']['ai_module']['ai_search_policy'] = 'block_all';
             }
             if ( isset( $settings['mode_0']['seo_tools_module']['custom_bots'] ) ) {
                 $settings['mode_0']['seo_tools_module']['custom_bots'] = [];
