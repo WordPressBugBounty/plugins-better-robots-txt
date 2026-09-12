@@ -4,7 +4,7 @@ Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 3.1.2
+Stable tag: 3.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -275,6 +275,10 @@ Learn more about [AI governance and machine readability](https://pagup.com/en/se
 
 Digital readability is the capacity of a website to be correctly understood by all four reading layers: humans, search engines, generative AI systems, and autonomous agents. Traditional SEO addresses only the search engine layer. Digital readability covers all four. Learn more at [pagup.com](https://pagup.com/en/glossary/digital-readability/).
 
+= Can I use Claude Code or Codex with this WordPress site? =
+
+This plugin does not grant AI agents access to WordPress. PAGUP Agent Control is a separate product designed to give compatible AI agents a dedicated WordPress identity with explicit permissions. It can support read-only audits, draft workflows, and supported content changes depending on the selected mode. Better Robots.txt continues to control public crawler directives separately.
+
 
 == Screenshots ==
 
@@ -287,7 +291,17 @@ Digital readability is the capacity of a website to be correctly understood by a
 7. Step 13 - Advanced settings and output options.
 8. Step 14 - Review & Save preview screen.
 
+== Upgrade Notice ==
+
+= 3.1.3 =
+Maintenance release: refreshes the bundled Freemius SDK to 2.13.4 and adds a contextual PAGUP Agent Control section. Your robots.txt rules and crawler settings are unchanged.
+
 == Changelog ==
+
+= 3.1.3 =
+* Updated the bundled Freemius WordPress SDK from 2.13.1 to 2.13.4 and refreshed its locked dependency for current pricing, payment-history currency, API-timeout, PHP compatibility, and add-on checkout fixes.
+* Added a contextual PAGUP Agent Control section with practical WordPress AI-agent task examples and explicit access-level guidance.
+* Updated the 10 bundled admin locales for the new ecosystem and prompt strings.
 
 = 3.1.2 =
 * Fixed Free edition AI Search policy handling so the global allow/block choice is respected during preview, save, and robots.txt generation.

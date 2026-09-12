@@ -1,0 +1,25 @@
+{
+  "fallback": "Part of the Pagup ecosystem",
+  "locales": {
+    "de_DE": "Teil des Pagup-Ökosystems",
+    "en_US": "Part of the Pagup ecosystem",
+    "es_ES": "Forma parte del ecosistema Pagup",
+    "fr_CA": "Fait partie de l’écosystème Pagup",
+    "fr_FR": "Fait partie de l’écosystème Pagup",
+    "it_IT": "Parte dell’ecosistema Pagup",
+    "nl_NL": "Onderdeel van het Pagup-ecosysteem",
+    "pt_BR": "Parte do ecossistema Pagup",
+    "pt_PT": "Parte do ecossistema Pagup",
+    "ru_RU": "Часть экосистемы Pagup"
+  },
+  "languageFallbacks": {
+    "de": "de_DE",
+    "en": "en_US",
+    "es": "es_ES",
+    "fr": "fr_FR",
+    "it": "it_IT",
+    "nl": "nl_NL",
+    "pt": "pt_PT",
+    "ru": "ru_RU"
+  }
+}

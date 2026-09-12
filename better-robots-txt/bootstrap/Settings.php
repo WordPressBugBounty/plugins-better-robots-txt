@@ -6,6 +6,7 @@ use Pagup\BetterRobots\Controllers\SettingsController;
 use Pagup\BetterRobots\Controllers\MetaboxController;
 use Pagup\BetterRobots\Controllers\ImportController;
 use Pagup\BetterRobots\Core\Asset;
+use Pagup\BetterRobots\Core\AgentControl;
 use Pagup\BetterRobots\Traits\ErrorHandler;
 class Settings {
     use ErrorHandler;
@@ -51,6 +52,7 @@ class Settings {
         add_action( 'admin_enqueue_scripts', [$this, 'assets'], 999 );
         // Plugin Settings
         add_filter( "plugin_action_links_" . ROBOTS_PLUGIN_BASE, [$this, 'setting_link'] );
+        add_filter( 'plugin_row_meta', [$this, 'plugin_row_meta'], 10, 2 );
         add_filter(
             'script_loader_tag',
             [$this, 'add_module_to_script'],
@@ -102,6 +104,30 @@ class Settings {
      */
     public function setting_link( array $links ) : array {
         array_unshift( $links, sprintf( '<a href="admin.php?page=%s">Settings</a>', self::PLUGIN_PAGE ) );
+        return $links;
+    }
+
+    /**
+     * Add a discreet Pagup ecosystem link to this plugin's row.
+     */
+    public function plugin_row_meta( array $links, string $file ) : array {
+        if ( $file !== ROBOTS_PLUGIN_BASE ) {
+            return $links;
+        }
+
+        $attributes = AgentControl::is_active()
+            ? ''
+            : ' target="_blank" rel="noopener noreferrer"';
+        [$ecosystem_label, $agent_control_label] = AgentControl::row_meta_labels();
+
+        $links[] = sprintf(
+            '<span>%1$s · <a href="%2$s"%3$s>%4$s</a></span>',
+            esc_html( $ecosystem_label ),
+            esc_url( AgentControl::url() ),
+            $attributes,
+            esc_html( $agent_control_label )
+        );
+
         return $links;
     }
 

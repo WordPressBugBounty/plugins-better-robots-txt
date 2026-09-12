@@ -11,7 +11,7 @@ class ComposerStaticInit04e98c36e78e8c4dc39021769985089e
     );
 
     public static $prefixLengthsPsr4 = array (
-        'P' => 
+        'P' =>
         array (
             'Pagup\\BetterRobots\\Traits\\' => 26,
             'Pagup\\BetterRobots\\Core\\' => 24,
@@ -23,27 +23,27 @@ class ComposerStaticInit04e98c36e78e8c4dc39021769985089e
     );
 
     public static $prefixDirsPsr4 = array (
-        'Pagup\\BetterRobots\\Traits\\' => 
+        'Pagup\\BetterRobots\\Traits\\' =>
         array (
             0 => __DIR__ . '/../..' . '/admin/traits',
         ),
-        'Pagup\\BetterRobots\\Core\\' => 
+        'Pagup\\BetterRobots\\Core\\' =>
         array (
             0 => __DIR__ . '/../..' . '/admin/core',
         ),
-        'Pagup\\BetterRobots\\Controllers\\' => 
+        'Pagup\\BetterRobots\\Controllers\\' =>
         array (
             0 => __DIR__ . '/../..' . '/admin/controllers',
         ),
-        'Pagup\\BetterRobots\\Config\\' => 
+        'Pagup\\BetterRobots\\Config\\' =>
         array (
             0 => __DIR__ . '/../..' . '/admin/config',
         ),
-        'Pagup\\BetterRobots\\Bootstrap\\' => 
+        'Pagup\\BetterRobots\\Bootstrap\\' =>
         array (
             0 => __DIR__ . '/../..' . '/bootstrap',
         ),
-        'Pagup\\BetterRobots\\' => 
+        'Pagup\\BetterRobots\\' =>
         array (
             0 => __DIR__ . '/../..' . '/admin',
         ),

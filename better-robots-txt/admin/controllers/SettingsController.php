@@ -3,6 +3,7 @@
 namespace Pagup\BetterRobots\Controllers;
 
 use Pagup\BetterRobots\Core\Option;
+use Pagup\BetterRobots\Core\AgentControl;
 use Pagup\BetterRobots\Traits\Sitemap;
 use Pagup\BetterRobots\Traits\RobotsHelper;
 use Pagup\BetterRobots\Traits\SettingHelper;
@@ -78,6 +79,10 @@ class SettingsController {
             'robots_url'           => $this->robotsTxtURL(),
             'physical_file'        => $this->get_physical_file_status(),
             'import_history'       => $this->get_import_history_public_state(),
+            'agent_control'        => array(
+                'active' => AgentControl::is_active(),
+                'url'    => AgentControl::url(),
+            ),
         ) );
         if ( ROBOTS_PLUGIN_MODE !== "prod" ) {
             echo $this->devNotification();
