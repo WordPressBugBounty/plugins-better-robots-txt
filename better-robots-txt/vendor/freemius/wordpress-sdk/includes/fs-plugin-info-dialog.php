@@ -329,7 +329,25 @@
             if ( is_object( $latest ) && isset( $latest->readme ) && is_object( $latest->readme ) ) {
                 $latest_version_readme_data = $latest->readme;
                 if ( isset( $latest_version_readme_data->sections ) ) {
-                    $data->sections = (array) $latest_version_readme_data->sections;
+                    /**
+                     * Pagup hardening (WordPress.org automated security review).
+                     *
+                     * These sections come straight from a runtime API response and reached
+                     * the admin iframe as unfiltered HTML, because the upstream SDK ships
+                     * its KSES loop commented out. They are filtered HERE, at ingestion,
+                     * rather than later over the whole sections array: by then the array
+                     * also holds `description`, `features` and `screenshots`, rendered
+                     * locally a few lines below, and the upstream allow list has `table`,
+                     * `tr`, `td` and `th` commented out, so a late blanket filter would
+                     * strip the pricing table out of the add-on dialogue.
+                     */
+                    $remote_sections = array();
+
+                    foreach ( (array) $latest_version_readme_data->sections as $section_name => $section_content ) {
+                        $remote_sections[ $section_name ] = wp_kses( $section_content, wp_kses_allowed_html( 'post' ) );
+                    }
+
+                    $data->sections = $remote_sections;
                 } else {
                     $data->sections = array();
                 }
@@ -1005,10 +1023,17 @@
                 'other_notes'  => fs_text_x_inline( 'Other Notes', 'Plugin installer section title', 'other-notes', $api->slug ),
             );
 
-            // Sanitize HTML
-//		foreach ( (array) $api->sections as $section_name => $content ) {
-//			$api->sections[$section_name] = wp_kses( $content, $plugins_allowedtags );
-//		}
+            /**
+             * Sanitize HTML.
+             *
+             * Pagup hardening (WordPress.org automated security review): the upstream SDK
+             * ships a KSES loop here, commented out. It is NOT re-enabled, because at this
+             * point `$api->sections` also holds `description`, `features` and `screenshots`,
+             * rendered locally by `_get_addon_info_filter()`, and the allow list just below
+             * has `table`, `tr`, `td` and `th` commented out, which would strip the pricing
+             * table. Remote readme sections are filtered at ingestion instead, where they
+             * are read from the API response. The scalar fields below keep their own pass.
+             */
 
             foreach ( array( 'version', 'author', 'requires', 'tested', 'homepage', 'downloaded', 'slug' ) as $key ) {
                 if ( isset( $api->$key ) ) {

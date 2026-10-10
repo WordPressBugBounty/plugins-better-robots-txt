@@ -11,6 +11,31 @@
     },
     "require": {
         "php": ">=7.4",
-        "freemius/wordpress-sdk": "^2.13"
-    }
+        "freemius/wordpress-sdk": "2.13.5"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "freemius/wordpress-sdk",
+                "version": "2.13.5",
+                "description": "Freemius WordPress SDK",
+                "license": "GPL-3.0-only",
+                "type": "library",
+                "require": {
+                    "php": ">=5.6"
+                },
+                "autoload": {
+                    "files": [
+                        "start.php"
+                    ]
+                },
+                "dist": {
+                    "type": "zip",
+                    "url": "composer-artifacts/freemius-wordpress-sdk-2.13.5.zip",
+                    "shasum": "e65dc3d5650b59e6d69b4953951262af915dfcf4"
+                }
+            }
+        }
+    ]
 }

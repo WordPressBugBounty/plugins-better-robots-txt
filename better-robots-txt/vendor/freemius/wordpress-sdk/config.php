@@ -391,5 +391,12 @@
         define( 'WP_FS__DEMO_MODE', false );
     }
     if ( ! defined( 'FS_SDK__SSLVERIFY' ) ) {
-        define( 'FS_SDK__SSLVERIFY', false );
+        /**
+         * Pagup hardening (WordPress.org automated security review).
+         *
+         * This file is loaded before includes/sdk/FreemiusWordPress.php, so this is the
+         * define() that decides. Certificate verification is on by default; a site can
+         * still opt out from wp-config.php before the SDK loads.
+         */
+        define( 'FS_SDK__SSLVERIFY', true );
     }

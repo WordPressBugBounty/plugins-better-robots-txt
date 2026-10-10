@@ -279,7 +279,17 @@
                     ),
                     'timeout'   => 0.01,
                     'blocking'  => false,
-                    'sslverify' => false,
+                    /**
+                     * Pagup hardening (WordPress.org automated security review).
+                     *
+                     * This request carries EVERY cookie of the current administrator, the
+                     * session cookie included, and the upstream SDK disabled certificate
+                     * verification on it outright. That defeats FS_SDK__SSLVERIFY, which
+                     * governs only the API transport. Verification follows the same constant
+                     * as the rest of the SDK, so a site that must opt out still can, from
+                     * wp-config.php, and does so knowingly.
+                     */
+                    'sslverify' => defined( 'FS_SDK__SSLVERIFY' ) ? FS_SDK__SSLVERIFY : true,
                     'cookies'   => $cookies,
                 )
             );
@@ -840,8 +850,49 @@
                 fs_request_get( 'blog_id' ) :
                 0;
 
-            if ( is_multisite() && $blog_id == get_current_blog_id() ) {
+            /**
+             * Pagup hardening (WordPress.org automated security review).
+             *
+             * The site identifier is normalized ONCE, here, before anything reads it. The
+             * first version of this patch authorized `(int) $blog_id` but let the ORIGINAL
+             * value reach resolve_cloned_sites(): with `blog_id=2junk` the capability was
+             * checked against site 2, switch_to_blog() then refused the non-numeric string,
+             * and the resolution ran on the CURRENT site, which the caller may not
+             * administer. Authorization and execution must read the same value. Found by the
+             * independent Codex audit of 2026-09-19.
+             */
+            if ( is_multisite() && ! empty( $blog_id ) && ! is_numeric( $blog_id ) ) {
+                wp_die( -1, 400 );
+            }
+
+            $blog_id = ( is_multisite() && ! empty( $blog_id ) ) ? (int) $blog_id : 0;
+
+            if ( is_multisite() && $blog_id === get_current_blog_id() ) {
                 $blog_id = 0;
+            }
+
+            /**
+             * The nonce authenticates the request, it does not authorize it. Require the
+             * capability that manages the affected site before any install or licence state
+             * is touched, so a subsite user cannot resolve a clone on another subsite.
+             *
+             * current_user_can_for_site() is the WordPress 6.7 replacement for
+             * current_user_can_for_blog(), which now emits a deprecation notice. The plugin
+             * still declares support down to WordPress 4.1, so both are probed before
+             * falling back to a plain capability check on the current site.
+             */
+            if ( fs_is_network_admin() ) {
+                $is_permitted = current_user_can( 'manage_network_options' );
+            } else if ( $blog_id > 0 && function_exists( 'current_user_can_for_site' ) ) {
+                $is_permitted = current_user_can_for_site( $blog_id, 'manage_options' );
+            } else if ( $blog_id > 0 && function_exists( 'current_user_can_for_blog' ) ) {
+                $is_permitted = current_user_can_for_blog( $blog_id, 'manage_options' );
+            } else {
+                $is_permitted = current_user_can( 'manage_options' );
+            }
+
+            if ( ! $is_permitted ) {
+                wp_die( -1, 403 );
             }
 
             if ( empty( $clone_action ) ) {
@@ -1223,7 +1274,7 @@
                 );
 
                 foreach ( $product_titles as $product_title ) {
-                    $products_list .= sprintf( '<li>%s</li>', $product_title );
+                    $products_list .= sprintf( '<li>%s</li>', esc_html( $product_title ) );
                 }
 
                 $products_list = '<ol>' . $products_list . '</ol>';
@@ -1231,8 +1282,8 @@
                 foreach ( $site_urls as $site_url ) {
                     $sites_list .= sprintf(
                         '<li><a href="%s" target="_blank">%s</a></li>',
-                        $site_url,
-                        fs_strip_url_protocol( $site_url )
+                        esc_url( $site_url ),
+                        esc_html( fs_strip_url_protocol( $site_url ) )
                     );
                 }
 
@@ -1242,15 +1293,15 @@
             $remote_site_link = '<b>' . (1 === $total_sites ?
                 sprintf(
                     '<a href="%s" target="_blank">%s</a>',
-                    $site_urls[0],
-                    fs_strip_url_protocol( $site_urls[0] )
+                    esc_url( $site_urls[0] ),
+                    esc_html( fs_strip_url_protocol( $site_urls[0] ) )
                 ) :
                 fs_text_inline( 'the above-mentioned sites', 'above-mentioned-sites' )) . '</b>';
 
             $current_site_link = sprintf(
                 '<b><a href="%s" target="_blank">%s</a></b>',
-                $current_url,
-                fs_strip_url_protocol( $current_url )
+                esc_url( $current_url ),
+                esc_html( fs_strip_url_protocol( $current_url ) )
             );
 
             $button_template = '<button class="button" data-clone-action="%s">%s</button>';
@@ -1323,7 +1374,7 @@
                 sprintf( '<div class="fs-clone-documentation-container">Unsure what to do? <a href="%s" target="_blank">Read more here</a>.</div>', $doc_url ),
                 // %1$s
                 ( 1 === $total_products ?
-                    sprintf( '<b>%s</b>', $product_titles[0] ) :
+                    sprintf( '<b>%s</b>', esc_html( $product_titles[0] ) ) :
                     ( 1 === $total_sites ?
                         sprintf( '<div>%s</div>', $products_list ) :
                         sprintf( '<div><p><strong>%s</strong>:</p>%s</div>', fs_esc_html_x_inline( 'Products', 'Clone resolution admin notice products list label', 'products' ), $products_list ) )

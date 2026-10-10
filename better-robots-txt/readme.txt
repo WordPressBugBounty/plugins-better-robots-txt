@@ -3,8 +3,8 @@ Contributors: pagup, the-rock, freemius
 Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 7.0
-Stable tag: 3.1.3
+Tested up to: 7.1
+Stable tag: 3.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -297,6 +297,9 @@ This plugin does not grant AI agents access to WordPress. PAGUP Agent Control is
 Maintenance release: refreshes the bundled Freemius SDK to 2.13.4 and adds a contextual PAGUP Agent Control section. Your robots.txt rules and crawler settings are unchanged.
 
 == Changelog ==
+
+= 3.1.4 =
+* Updated Freemius SDK to the latest version
 
 = 3.1.3 =
 * Updated the bundled Freemius WordPress SDK from 2.13.1 to 2.13.4 and refreshed its locked dependency for current pricing, payment-history currency, API-timeout, PHP compatibility, and add-on checkout fixes.

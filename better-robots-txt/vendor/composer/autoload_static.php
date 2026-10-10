@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit04e98c36e78e8c4dc39021769985089e
+class ComposerStaticInit10a7f22d2da14a18850e5c6e0e9a6841
 {
     public static $files = array (
         '8d50dc88e56bace65e1e72f6017983ed' => __DIR__ . '/..' . '/freemius/wordpress-sdk/start.php',
@@ -56,9 +56,9 @@ class ComposerStaticInit04e98c36e78e8c4dc39021769985089e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit04e98c36e78e8c4dc39021769985089e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit10a7f22d2da14a18850e5c6e0e9a6841::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit10a7f22d2da14a18850e5c6e0e9a6841::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit10a7f22d2da14a18850e5c6e0e9a6841::$classMap;
 
         }, null, ClassLoader::class);
     }

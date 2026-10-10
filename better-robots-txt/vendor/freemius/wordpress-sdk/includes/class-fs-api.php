@@ -121,7 +121,13 @@
 			Freemius_Api_WordPress::SetClockDiff( self::$_clock_diff );
 
 			if ( self::$_options->get_option( 'api_force_http', false ) ) {
-				Freemius_Api_WordPress::SetHttp();
+				/**
+				 * Pagup hardening (WordPress.org automated security review).
+				 *
+				 * API traffic never resumes over plain HTTP. A flag left behind by an older
+				 * SDK version is cleared instead of switching the protocol back down.
+				 */
+				self::$_options->unset_option( 'api_force_http', true );
 			}
 		}
 
@@ -196,7 +202,12 @@
 		private function _call( $path, $method = 'GET', $params = array(), $in_retry = false ) {
             $this->_logger->entrance( $method . ':' . $path );
 
-            $force_http = ( ! $in_retry && self::$_options->get_option( 'api_force_http', false ) );
+            /**
+             * Pagup hardening (WordPress.org automated security review).
+             *
+             * The HTTP fallback state is gone: no call reads, writes or acts on the
+             * api_force_http flag any more, so a request can never leave over plaintext.
+             */
 
             if ( self::is_temporary_down() ) {
                 $result = $this->get_temporary_unavailable_error();
@@ -244,19 +255,18 @@
                             // Retry call with new synced clock.
                             $retry = true;
                         }
-                    } else if (
-                        Freemius_Api_WordPress::IsHttps() &&
-                        FS_Api::is_ssl_error_response( $result )
-                    ) {
-                        $force_http = true;
-                        $retry      = true;
                     }
 
-                    if ( $retry ) {
-                        if ( $force_http ) {
-                            $this->toggle_force_http( true );
-                        }
+                    /**
+                     * Pagup hardening (WordPress.org automated security review).
+                     *
+                     * A TLS failure used to enable the HTTP mode and replay the same path,
+                     * method and parameters in plaintext, removing both confidentiality and
+                     * server authentication. The call now fails closed and the error is
+                     * returned to the caller.
+                     */
 
+                    if ( $retry ) {
                         $result = $this->_call( $path, $method, $params, true );
                     }
                 }
@@ -268,9 +278,7 @@
                     $this->_logger->api_error( $result );
                 }
 
-                if ( $force_http ) {
-                    $this->toggle_force_http( false );
-                }
+                // Pagup hardening: there is no HTTP fallback state left to roll back.
             }
 
             return $result;
@@ -475,20 +483,15 @@
 		}
 
         /**
-         * @author Leo Fajardo (@leorw)
-         * @since 2.5.4
+         * Pagup hardening (WordPress.org automated security review).
          *
-         * @param bool $is_http
+         * The upstream private helper toggle_force_http() has been removed. It was the only
+         * WRITER of the api_force_http flag, so removing it closes the transport downgrade
+         * instead of leaving it unreachable. It was NOT the only caller of SetHttp() in this
+         * class: _init() called it too, on the stored flag, and that call site is replaced by
+         * the api-force-http-purge patch, which clears the flag rather than switching the
+         * protocol back down.
          */
-        private function toggle_force_http( $is_http ) {
-            self::$_options->set_option( 'api_force_http', $is_http, true );
-
-            if ( $is_http ) {
-                Freemius_Api_WordPress::SetHttp();
-            } else if ( method_exists( 'Freemius_Api_WordPress', 'SetHttps' ) ) {
-                Freemius_Api_WordPress::SetHttps();
-            }
-        }
 
         /**
          * @author Leo Fajardo (@leorw)

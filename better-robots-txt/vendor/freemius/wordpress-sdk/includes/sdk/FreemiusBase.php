@@ -168,19 +168,16 @@
              */
             protected static function Base64UrlDecode( $input ) {
                 /**
-                 * IMPORTANT NOTE:
-                 * This is a hack suggested by @otto42 and @greenshady from
-                 * the theme's review team. The usage of base64 for API
-                 * signature encoding was approved in a Slack meeting
-                 * held on Tue (10/25 2016).
-                 *
-                 * @todo Remove this hack once the base64 error is removed from the Theme Check.
+                 * Pagup hardening (WordPress.org automated security review): the upstream
+                 * SDK rebuilt the callable name from two string fragments to keep Theme
+                 * Check quiet. The base64 usage itself was approved by the theme review
+                 * team in 2016 and is required by the API signature format; only the
+                 * concealment is removed, so base64_decode() is called literally.
                  *
                  * @since 1.2.2
                  * @author Vova Feldman (@svovaf)
                  */
-                $fn = 'base64' . '_decode';
-                return $fn( strtr( $input, '-_', '+/' ) );
+                return base64_decode( strtr( $input, '-_', '+/' ) );
             }
 
             /**
@@ -196,19 +193,16 @@
              */
             protected static function Base64UrlEncode( $input ) {
                 /**
-                 * IMPORTANT NOTE:
-                 * This is a hack suggested by @otto42 and @greenshady from
-                 * the theme's review team. The usage of base64 for API
-                 * signature encoding was approved in a Slack meeting
-                 * held on Tue (10/25 2016).
-                 *
-                 * @todo Remove this hack once the base64 error is removed from the Theme Check.
+                 * Pagup hardening (WordPress.org automated security review): the upstream
+                 * SDK rebuilt the callable name from two string fragments to keep Theme
+                 * Check quiet. The base64 usage itself was approved by the theme review
+                 * team in 2016 and is required by the API signature format; only the
+                 * concealment is removed, so base64_encode() is called literally.
                  *
                  * @since 1.2.2
                  * @author Vova Feldman (@svovaf)
                  */
-                $fn = 'base64' . '_encode';
-                $str = strtr( $fn( $input ), '+/', '-_' );
+                $str = strtr( base64_encode( $input ), '+/', '-_' );
                 $str = str_replace( '=', '', $str );
 
                 return $str;

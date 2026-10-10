@@ -865,7 +865,14 @@
          * @return bool|mixed
          */
         static function _fetch_plugin_info_from_repository( $action, $args ) {
-            $url = $http_url = 'http://api.wordpress.org/plugins/info/1.2/';
+            /**
+             * Pagup hardening (WordPress.org automated security review).
+             *
+             * The upstream SDK started from a plaintext URL and upgraded it only when
+             * wp_http_supports() reported TLS. The request goes out over HTTPS or not at
+             * all. $http_url was assigned here and never read.
+             */
+            $url = 'https://api.wordpress.org/plugins/info/1.2/';
             $url = add_query_arg(
                 array(
                     'action'  => $action,
@@ -874,9 +881,7 @@
                 $url
             );
 
-            if ( wp_http_supports( array( 'ssl' ) ) ) {
-                $url = set_url_scheme( $url, 'https' );
-            }
+            // Pagup hardening: the URL is HTTPS from the start, there is no scheme to switch any more.
 
             // The new endpoint version serves only GET requests.
             $request = wp_remote_get( $url, array( 'timeout' => 15 ) );
@@ -953,10 +958,13 @@
                 'user-agent' => ( 'WordPress/' . $wp_version . '; ' . home_url( '/' ) )
             );
 
-            $url = "http://api.wordpress.org/{$module_type}/update-check/1.1/";
-            if ( $ssl = wp_http_supports( array( 'ssl' ) ) ) {
-                $url = set_url_scheme( $url, 'https' );
-            }
+            /**
+             * Pagup hardening (WordPress.org automated security review).
+             *
+             * Same plaintext start as the information endpoint above, and this one handed
+             * the URL to Freemius::safe_remote_post(), which accepted it. HTTPS or nothing.
+             */
+            $url = "https://api.wordpress.org/{$module_type}/update-check/1.1/";
 
             $raw_response = Freemius::safe_remote_post(
                 $url,

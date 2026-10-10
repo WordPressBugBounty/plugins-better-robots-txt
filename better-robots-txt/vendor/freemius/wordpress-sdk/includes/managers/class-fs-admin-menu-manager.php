@@ -834,7 +834,11 @@
 		 *
 		 * Note for WordPress.org Theme/Plugin reviewer:
 		 *
-		 *  This is a replication of `add_menu_page()` to avoid Theme Check warning.
+		 *  Pagup hardening (WordPress.org automated security review): the upstream
+		 *  SDK reconstructed the callable name from two string fragments so that Theme
+		 *  Check would stay quiet. Concealing a callable name is worse than the warning
+		 *  it avoided, and this product is a plugin, never a theme, so `add_menu_page()` is
+		 *  called literally.
 		 *
 		 *  Why?
 		 *  ====
@@ -878,9 +882,7 @@
 			$icon_url = '',
 			$position = null
 		) {
-			$fn = 'add_menu' . '_page';
-
-			return $fn(
+			return add_menu_page(
 				$page_title,
 				$menu_title,
 				$capability,
@@ -937,7 +939,11 @@
 		 *
 		 * Note for WordPress.org Theme/Plugin reviewer:
 		 *
-		 *  This is a replication of `add_submenu_page()` to avoid Theme Check warning.
+		 *  Pagup hardening (WordPress.org automated security review): the upstream
+		 *  SDK reconstructed the callable name from two string fragments so that Theme
+		 *  Check would stay quiet. Concealing a callable name is worse than the warning
+		 *  it avoided, and this product is a plugin, never a theme, so `add_submenu_page()` is
+		 *  called literally.
 		 *
 		 *  Why?
 		 *  ====
@@ -974,9 +980,7 @@
 			$menu_slug,
 			$function = ''
 		) {
-			$fn = 'add_submenu' . '_page';
-
-			return $fn( $parent_slug,
+			return add_submenu_page( $parent_slug,
 				$page_title,
 				$menu_title,
 				$capability,

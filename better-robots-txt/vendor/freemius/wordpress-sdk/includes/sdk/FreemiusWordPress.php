@@ -63,7 +63,15 @@
 	}
 
     if ( ! defined( 'FS_SDK__SSLVERIFY' ) ) {
-        define( 'FS_SDK__SSLVERIFY', false );
+        /**
+         * Pagup hardening (WordPress.org automated security review).
+         *
+         * The upstream SDK defaults to false, which lets an active network-path adversary
+         * impersonate the Freemius API. Verification is on by default here. A site that
+         * genuinely needs the old behaviour can still define the constant in wp-config.php
+         * before the SDK loads.
+         */
+        define( 'FS_SDK__SSLVERIFY', true );
     }
 
 	$curl_version = FS_SDK__HAS_CURL ?
@@ -71,7 +79,15 @@
 		array( 'version' => '7.37' );
 
 	if ( ! defined( 'FS_API__PROTOCOL' ) ) {
-		define( 'FS_API__PROTOCOL', version_compare( $curl_version['version'], '7.37', '>=' ) ? 'https' : 'http' );
+		/**
+		 * Pagup hardening (WordPress.org automated security review).
+		 *
+		 * The upstream SDK selected plain HTTP whenever the local cURL was older than
+		 * 7.37, so those sites sent every API call in clear text and authenticated no
+		 * endpoint. The protocol is HTTPS for everyone; a site whose TLS stack is too
+		 * old now fails closed instead of downgrading silently.
+		 */
+		define( 'FS_API__PROTOCOL', 'https' );
 	}
 
 	if ( ! defined( 'FS_API__LOGGER_ON' ) ) {
@@ -158,10 +174,14 @@
 		/**
 		 * Set API connection protocol.
 		 *
+		 * Pagup hardening (WordPress.org automated security review): this setter used to
+		 * drop the API transport to plain HTTP. Nothing in the SDK calls it any more, and
+		 * it is kept only so that an external caller does not fatal. The transport stays
+		 * on HTTPS.
+		 *
 		 * @since 1.0.4
 		 */
 		public static function SetHttp() {
-			self::$_protocol = 'http';
 		}
 
         /**
