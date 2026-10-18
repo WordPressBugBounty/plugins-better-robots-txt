@@ -1,0 +1,221 @@
+{
+  "version": "1.0",
+  "locales": {
+    "fr": [
+      {
+        "id": "discovery",
+        "title": "Votre catalogue Shopify peut aussi vivre dans WordPress.",
+        "body": "Avec Fy2Press, une autre extension PAGUP, présentez vos produits dans des pages, collections et guides d’achat WordPress. Conservez votre boutique et le paiement Shopify. Commencez avec la version gratuite.",
+        "cta": "Découvrir Fy2Press",
+        "route": "home",
+        "dismiss": "Ne plus afficher"
+      },
+      {
+        "id": "content",
+        "title": "Un article qui conseille. Des produits à découvrir.",
+        "body": "Vous préparez un guide d’achat ou une sélection ? Fy2Press vous permet d’y présenter les produits Shopify avec les outils de publication WordPress. FREE comprend les blocs et les codes courts ; PRO ajoute notamment la synchronisation planifiée.",
+        "cta": "Explorer les possibilités",
+        "route": "home",
+        "dismiss": "Ne plus afficher"
+      },
+      {
+        "id": "seo",
+        "title": "Présentez vos produits avec une stratégie de pages claire.",
+        "body": "Fy2Press associe catalogue Shopify, contenus WordPress et réglages SEO du catalogue. Choisissez les pages à indexer et l’URL produit privilégiée, puis intégrez les produits à vos contenus utiles.",
+        "cta": "Découvrir Fy2Press",
+        "route": "home",
+        "dismiss": "Ne plus afficher"
+      }
+    ],
+    "en": [
+      {
+        "id": "discovery",
+        "title": "Your Shopify catalog can live in WordPress, too.",
+        "body": "With Fy2Press, another PAGUP plugin, present products in WordPress pages, collections and buying guides. Keep your store and checkout on Shopify. Start with the free edition.",
+        "cta": "Discover Fy2Press",
+        "route": "home",
+        "dismiss": "Do not show again"
+      },
+      {
+        "id": "content",
+        "title": "An article that advises. Products to explore.",
+        "body": "Planning a buying guide or curated selection? Fy2Press lets you present Shopify products with your WordPress publishing tools. FREE includes blocks and shortcodes; PRO also adds scheduled synchronization.",
+        "cta": "Explore the possibilities",
+        "route": "home",
+        "dismiss": "Do not show again"
+      },
+      {
+        "id": "seo",
+        "title": "Present your products with a clear page strategy.",
+        "body": "Fy2Press combines a Shopify catalog, WordPress content and catalog SEO settings. Choose which pages may be indexed and the preferred product URL, then place products inside useful content.",
+        "cta": "Discover Fy2Press",
+        "route": "home",
+        "dismiss": "Do not show again"
+      }
+    ],
+    "es": [
+      {
+        "id": "discovery",
+        "title": "Su catálogo Shopify también puede vivir en WordPress.",
+        "body": "Con Fy2Press, otra extensión de PAGUP, presente productos en páginas, colecciones y guías de compra de WordPress. Conserve la tienda y el pago en Shopify. Empiece con la edición gratuita.",
+        "cta": "Descubrir Fy2Press",
+        "route": "home",
+        "dismiss": "No volver a mostrar"
+      },
+      {
+        "id": "content",
+        "title": "Un artículo que orienta. Productos para descubrir.",
+        "body": "¿Prepara una guía de compra o una selección? Fy2Press le permite presentar productos Shopify con sus herramientas de publicación WordPress. FREE incluye bloques y códigos cortos; PRO añade también sincronización programada.",
+        "cta": "Explorar las posibilidades",
+        "route": "home",
+        "dismiss": "No volver a mostrar"
+      },
+      {
+        "id": "seo",
+        "title": "Presente sus productos con una estrategia de páginas clara.",
+        "body": "Fy2Press combina catálogo Shopify, contenidos WordPress y ajustes SEO del catálogo. Elija qué páginas se pueden indexar y la URL de producto preferida, e integre los productos en contenidos útiles.",
+        "cta": "Descubrir Fy2Press",
+        "route": "home",
+        "dismiss": "No volver a mostrar"
+      }
+    ],
+    "de": [
+      {
+        "id": "discovery",
+        "title": "Ihr Shopify-Katalog kann auch in WordPress erscheinen.",
+        "body": "Mit Fy2Press, einem weiteren PAGUP-Plugin, präsentieren Sie Produkte auf WordPress-Seiten, in Kollektionen und Kaufratgebern. Shop und Bezahlung bleiben bei Shopify. Beginnen Sie mit der kostenlosen Edition.",
+        "cta": "Fy2Press entdecken (Englisch)",
+        "route": "home",
+        "dismiss": "Nicht mehr anzeigen"
+      },
+      {
+        "id": "content",
+        "title": "Ein Artikel, der berät. Produkte zum Entdecken.",
+        "body": "Planen Sie einen Kaufratgeber oder eine Produktauswahl? Mit Fy2Press präsentieren Sie Shopify-Produkte mit den Veröffentlichungswerkzeugen von WordPress. FREE enthält Blöcke und Shortcodes; PRO ergänzt unter anderem die geplante Synchronisierung.",
+        "cta": "Möglichkeiten entdecken (Englisch)",
+        "route": "home",
+        "dismiss": "Nicht mehr anzeigen"
+      },
+      {
+        "id": "seo",
+        "title": "Präsentieren Sie Ihre Produkte mit einer klaren Seitenstrategie.",
+        "body": "Fy2Press verbindet einen Shopify-Katalog mit WordPress-Inhalten und SEO-Einstellungen für den Katalog. Wählen Sie die indexierbaren Seiten und die bevorzugte Produkt-URL und integrieren Sie Produkte in hilfreiche Inhalte.",
+        "cta": "Fy2Press entdecken (Englisch)",
+        "route": "home",
+        "dismiss": "Nicht mehr anzeigen"
+      }
+    ],
+    "it": [
+      {
+        "id": "discovery",
+        "title": "Il tuo catalogo Shopify può vivere anche in WordPress.",
+        "body": "Con Fy2Press, un altro plugin PAGUP, presenta i prodotti in pagine, collezioni e guide agli acquisti di WordPress. Mantieni il negozio e il pagamento su Shopify. Inizia con la versione gratuita.",
+        "cta": "Scopri Fy2Press (in inglese)",
+        "route": "home",
+        "dismiss": "Non mostrare più"
+      },
+      {
+        "id": "content",
+        "title": "Un articolo che consiglia. Prodotti da scoprire.",
+        "body": "Stai preparando una guida agli acquisti o una selezione? Fy2Press ti permette di presentare i prodotti Shopify con gli strumenti di pubblicazione di WordPress. FREE include blocchi e shortcode; PRO aggiunge anche la sincronizzazione programmata.",
+        "cta": "Esplora le possibilità (in inglese)",
+        "route": "home",
+        "dismiss": "Non mostrare più"
+      },
+      {
+        "id": "seo",
+        "title": "Presenta i tuoi prodotti con una strategia chiara per le pagine.",
+        "body": "Fy2Press unisce catalogo Shopify, contenuti WordPress e impostazioni SEO del catalogo. Scegli le pagine indicizzabili e l’URL prodotto preferito, poi integra i prodotti in contenuti utili.",
+        "cta": "Scopri Fy2Press (in inglese)",
+        "route": "home",
+        "dismiss": "Non mostrare più"
+      }
+    ],
+    "nl": [
+      {
+        "id": "discovery",
+        "title": "Uw Shopify-catalogus kan ook in WordPress staan.",
+        "body": "Met Fy2Press, een andere PAGUP-plugin, presenteert u producten op WordPress-pagina’s, in collecties en koopgidsen. Uw winkel en de betaling blijven bij Shopify. Begin met de gratis editie.",
+        "cta": "Ontdek Fy2Press (Engels)",
+        "route": "home",
+        "dismiss": "Niet meer tonen"
+      },
+      {
+        "id": "content",
+        "title": "Een artikel dat adviseert. Producten om te ontdekken.",
+        "body": "Maakt u een koopgids of een selectie? Met Fy2Press presenteert u Shopify-producten met de publicatietools van WordPress. FREE bevat blokken en shortcodes; PRO voegt onder meer geplande synchronisatie toe.",
+        "cta": "Bekijk de mogelijkheden (Engels)",
+        "route": "home",
+        "dismiss": "Niet meer tonen"
+      },
+      {
+        "id": "seo",
+        "title": "Presenteer uw producten met een duidelijke paginastrategie.",
+        "body": "Fy2Press combineert een Shopify-catalogus, WordPress-inhoud en SEO-instellingen voor de catalogus. Kies welke pagina’s geïndexeerd mogen worden en welke product-URL de voorkeur heeft. Voeg daarna producten toe aan nuttige inhoud.",
+        "cta": "Ontdek Fy2Press (Engels)",
+        "route": "home",
+        "dismiss": "Niet meer tonen"
+      }
+    ],
+    "pt": [
+      {
+        "id": "discovery",
+        "title": "O seu catálogo Shopify também pode estar no WordPress.",
+        "body": "Com o Fy2Press, outro plugin PAGUP, apresente produtos em páginas, coleções e guias de compra do WordPress. Mantenha a loja e o pagamento no Shopify. Comece com a edição gratuita.",
+        "cta": "Conhecer o Fy2Press (em inglês)",
+        "route": "home",
+        "dismiss": "Não voltar a mostrar"
+      },
+      {
+        "id": "content",
+        "title": "Um artigo que orienta. Produtos para descobrir.",
+        "body": "Está a preparar um guia de compra ou uma seleção? O Fy2Press permite apresentar produtos Shopify com as ferramentas de publicação do WordPress. FREE inclui blocos e códigos curtos; PRO acrescenta também a sincronização programada.",
+        "cta": "Explorar as possibilidades (em inglês)",
+        "route": "home",
+        "dismiss": "Não voltar a mostrar"
+      },
+      {
+        "id": "seo",
+        "title": "Apresente os seus produtos com uma estratégia clara de páginas.",
+        "body": "O Fy2Press combina catálogo Shopify, conteúdos WordPress e definições SEO do catálogo. Escolha as páginas que podem ser indexadas e o URL preferido do produto, depois integre os produtos em conteúdos úteis.",
+        "cta": "Conhecer o Fy2Press (em inglês)",
+        "route": "home",
+        "dismiss": "Não voltar a mostrar"
+      }
+    ],
+    "ru": [
+      {
+        "id": "discovery",
+        "title": "Ваш каталог Shopify может появиться и в WordPress.",
+        "body": "С Fy2Press, ещё одним плагином PAGUP, представляйте товары на страницах WordPress, в подборках и руководствах по покупке. Магазин и оплата остаются в Shopify. Начните с бесплатной версии.",
+        "cta": "Узнать о Fy2Press (на английском)",
+        "route": "home",
+        "dismiss": "Больше не показывать"
+      },
+      {
+        "id": "content",
+        "title": "Статья с советами. Товары для знакомства.",
+        "body": "Готовите руководство по покупке или подборку? Fy2Press позволяет показывать товары Shopify с помощью инструментов публикации WordPress. FREE включает блоки и шорткоды, а PRO также добавляет синхронизацию по расписанию.",
+        "cta": "Изучить возможности (на английском)",
+        "route": "home",
+        "dismiss": "Больше не показывать"
+      },
+      {
+        "id": "seo",
+        "title": "Представляйте товары с ясной стратегией страниц.",
+        "body": "Fy2Press объединяет каталог Shopify, содержимое WordPress и настройки SEO каталога. Выберите страницы для индексации и предпочтительный URL товара, затем добавьте товары в полезные материалы.",
+        "cta": "Узнать о Fy2Press (на английском)",
+        "route": "home",
+        "dismiss": "Больше не показывать"
+      }
+    ]
+  },
+  "tracking": "none",
+  "image": "medias/f2-icon-256.png",
+  "links": "canonical only; no UTM, redirect, referral code, ping or beacon",
+  "localization": {
+    "source": "Owner kit EN/FR-CA/ES",
+    "adaptations": "DE/IT/NL/PT/RU for existing parent languages; their CTA explicitly identifies the English destination.",
+    "portuguese": "Shared Portuguese copy for pt-PT and pt-BR; no new product claim."
+  }
+}

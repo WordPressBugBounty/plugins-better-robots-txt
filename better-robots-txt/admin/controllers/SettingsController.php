@@ -88,6 +88,9 @@ class SettingsController {
             echo $this->devNotification();
         }
         echo '<div id="rt__app"></div>';
+        echo '<template id="pagup-fy2press-discovery">';
+        \Pagup_Fy2Press_Discovery_V1::render( 'better-robots-txt' );
+        echo '</template>';
     }
 
     /**
