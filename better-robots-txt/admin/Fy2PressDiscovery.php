@@ -1,18 +1,20 @@
 <?php
-/** Local, shared dismissal for the single Fy2Press discovery campaign. */
+/** Plugin-owned renderer; the v1 user/site dismissal preference remains shared. */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if ( ! class_exists( 'Pagup_Fy2Press_Discovery_V1', false ) ) {
-    final class Pagup_Fy2Press_Discovery_V1 {
+// Older PAGUP plugins may define the shared V1 class first. Keep this renderer
+// independent so their bundled copy cannot replace Better Robots content.
+if ( ! class_exists( 'Pagup_BetterRobots_Fy2Press_Discovery', false ) ) {
+    final class Pagup_BetterRobots_Fy2Press_Discovery {
         private const CAMPAIGN = 'fy2press-discovery-v1';
         private static $parents = array();
         private static $rendered = false;
 
         public static function register( $page, $variant, $plugin_file, $extra_capability = '' ) {
             if ( empty( self::$parents ) ) {
-                add_action( 'admin_post_pagup_fy2press_dismiss_v1', array( __CLASS__, 'dismiss' ) );
+                add_action( 'admin_post_brt_fy2press_dismiss_v1', array( __CLASS__, 'dismiss' ) );
             }
             self::$parents[$page] = array(
                 'variant' => $variant,
@@ -82,26 +84,30 @@ if ( ! class_exists( 'Pagup_Fy2Press_Discovery_V1', false ) ) {
             $image = plugins_url( 'admin/assets/fy2press/f2-icon-256.png', self::$parents[$page]['plugin_file'] );
             ?>
             <style>
-                .pagup-fy2press-card{box-sizing:border-box;max-width:1000px;margin:28px 20px 28px 0;padding:24px;border:1px solid #e5d9e4;border-radius:8px;background:#fff;color:#211b29;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:anywhere}
+                .pagup-fy2press-card{box-sizing:border-box;width:100%;margin:28px 0 0;padding:24px;border:1px solid #e5d9e4;border-inline-start:4px solid #b80062;border-radius:8px;background:#fff8fc;color:#211b29;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:anywhere}
                 .pagup-fy2press-card *{box-sizing:border-box}
                 .pagup-fy2press-brand{display:flex;gap:12px;align-items:center;color:#751445;font-weight:600}
                 .pagup-fy2press-card h2{font-size:22px;line-height:1.35;margin:18px 0 10px;color:#211b29}
                 .pagup-fy2press-card p{font-size:15px;line-height:1.6;margin:10px 0 20px}
+                .pagup-fy2press-card .pagup-fy2press-note{font-size:13px;color:#59515d}
                 .pagup-fy2press-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
                 .pagup-fy2press-card a{display:inline-block;max-width:100%;padding:12px 18px;background:#b80062;color:#fff;text-decoration:none;border-radius:5px;font-weight:600;line-height:1.5}
                 .pagup-fy2press-card form{margin:0}
                 .pagup-fy2press-card button{font:inherit;min-height:44px;padding:10px 2px;border:0;background:transparent;text-decoration:underline;color:#59515d;cursor:pointer;text-align:left;white-space:normal}
                 .pagup-fy2press-card :is(a,button):focus-visible{outline:3px solid #005fcc;outline-offset:3px}
-                @media(max-width:480px){.pagup-fy2press-card{margin:20px 10px 20px 0;padding:20px}.pagup-fy2press-card h2{font-size:21px}}
+                @media(max-width:480px){.pagup-fy2press-card{margin:20px 0 0;padding:20px}.pagup-fy2press-card h2{font-size:21px}}
             </style>
             <aside class="pagup-fy2press-card" aria-labelledby="pagup-fy2press-title" data-fy2press-campaign="fy2press-discovery-v1">
                 <div class="pagup-fy2press-brand"><img src="<?php echo esc_url( $image ); ?>" width="48" height="48" alt=""> <span>Fy2Press · PAGUP</span></div>
                 <h2 id="pagup-fy2press-title"><?php echo esc_html( $copy['title'] ); ?></h2>
                 <p><?php echo esc_html( $copy['body'] ); ?></p>
+                <?php if ( ! empty( $copy['note'] ) ) : ?>
+                    <p class="pagup-fy2press-note"><?php echo esc_html( $copy['note'] ); ?></p>
+                <?php endif; ?>
                 <div class="pagup-fy2press-actions">
                     <a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $copy['cta'] ); ?></a>
                     <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-                        <input type="hidden" name="action" value="pagup_fy2press_dismiss_v1">
+                        <input type="hidden" name="action" value="brt_fy2press_dismiss_v1">
                         <input type="hidden" name="campaign" value="fy2press-discovery-v1">
                         <input type="hidden" name="origin_page" value="<?php echo esc_attr( $page ); ?>">
                         <?php wp_nonce_field( self::CAMPAIGN . ':' . get_current_blog_id() . ':' . $page, 'fy2press_nonce', false ); ?>

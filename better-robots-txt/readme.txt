@@ -3,8 +3,8 @@ Contributors: pagup, the-rock, freemius
 Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 7.1
-Stable tag: 3.1.5
+Tested up to: 7.1.3
+Stable tag: 3.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,8 @@ Better Robots.txt is available in Free, Pro, and Premium editions. The free plug
 ## A quick overview
 
 https://vimeo.com/1169756981
+
+[Try the interactive demo](https://better-robots.com/demo) to explore the Pro settings, choose a preset, and save your choices on a temporary sample site, without installing the plugin. The demo does not generate robots.txt or other output files, and imports are disabled.
 
 ## Why Better Robots.txt is different
 
@@ -293,10 +295,20 @@ This plugin does not grant AI agents access to WordPress. PAGUP Agent Control is
 
 == Upgrade Notice ==
 
+= 3.1.6 =
+Improves mobile and keyboard use in Free and Pro and clarifies the Fy2Press discovery card. Existing crawler settings are preserved.
+
 = 3.1.3 =
 Maintenance release: refreshes the bundled Freemius SDK to 2.13.4 and adds a contextual PAGUP Agent Control section. Your robots.txt rules and crawler settings are unchanged.
 
 == Changelog ==
+
+= 3.1.6 =
+* Improved mobile layouts and keyboard navigation in the Free and Pro settings screens.
+* Made AI policy choices and paid crawler controls easier to operate with a keyboard and on touch screens.
+* Fixed narrow-screen text clipping, notification overlap, and the visibility of save controls.
+* Clarified how Fy2Press combines WordPress content with a Shopify catalog and checkout, including setup and subscription requirements.
+* Isolated the Better Robots.txt Fy2Press card from other plugins that load the shared promotion component.
 
 = 3.1.5 =
 * Added an optional Fy2Press discovery card after the plugin settings, with local images and direct links without tracking.

@@ -20,11 +20,12 @@
       },
       {
         "id": "seo",
-        "title": "Présentez vos produits avec une stratégie de pages claire.",
-        "body": "Fy2Press associe catalogue Shopify, contenus WordPress et réglages SEO du catalogue. Choisissez les pages à indexer et l’URL produit privilégiée, puis intégrez les produits à vos contenus utiles.",
-        "cta": "Découvrir Fy2Press",
+        "title": "La liberté de WordPress. Les ventes avec Shopify.",
+        "body": "Fy2Press relie votre catalogue Shopify à votre site WordPress, sans installer WooCommerce. Créez vos pages produit, collections et guides d’achat avec vos outils WordPress. Shopify gère les commandes et le paiement.",
+        "cta": "Voir comment fonctionne Fy2Press",
         "route": "home",
-        "dismiss": "Ne plus afficher"
+        "dismiss": "Ne plus afficher",
+        "note": "Commencez avec la version gratuite. Il vous faut un site WordPress et une boutique Shopify, existants ou à créer pour votre projet. Abonnement Shopify distinct."
       }
     ],
     "en": [
@@ -46,11 +47,12 @@
       },
       {
         "id": "seo",
-        "title": "Present your products with a clear page strategy.",
-        "body": "Fy2Press combines a Shopify catalog, WordPress content and catalog SEO settings. Choose which pages may be indexed and the preferred product URL, then place products inside useful content.",
-        "cta": "Discover Fy2Press",
+        "title": "WordPress freedom. Shopify sales.",
+        "body": "Fy2Press connects your Shopify catalog to your WordPress site, without installing WooCommerce. Build product pages, collections and buying guides with your WordPress tools. Shopify handles orders and checkout.",
+        "cta": "See how Fy2Press works",
         "route": "home",
-        "dismiss": "Do not show again"
+        "dismiss": "Do not show again",
+        "note": "Start with the free edition. You need a WordPress site and a Shopify store, already set up or created for your project. Shopify subscription sold separately."
       }
     ],
     "es": [
@@ -72,11 +74,12 @@
       },
       {
         "id": "seo",
-        "title": "Presente sus productos con una estrategia de páginas clara.",
-        "body": "Fy2Press combina catálogo Shopify, contenidos WordPress y ajustes SEO del catálogo. Elija qué páginas se pueden indexar y la URL de producto preferida, e integre los productos en contenidos útiles.",
-        "cta": "Descubrir Fy2Press",
+        "title": "La libertad de WordPress. Las ventas con Shopify.",
+        "body": "Fy2Press conecta su catálogo Shopify con su sitio WordPress, sin instalar WooCommerce. Cree páginas de producto, colecciones y guías de compra con sus herramientas WordPress. Shopify gestiona los pedidos y el pago.",
+        "cta": "Vea cómo funciona Fy2Press",
         "route": "home",
-        "dismiss": "No volver a mostrar"
+        "dismiss": "No volver a mostrar",
+        "note": "Empiece con la versión gratuita. Necesita un sitio WordPress y una tienda Shopify, existentes o que cree para su proyecto. Suscripción a Shopify por separado."
       }
     ],
     "de": [
@@ -98,11 +101,12 @@
       },
       {
         "id": "seo",
-        "title": "Präsentieren Sie Ihre Produkte mit einer klaren Seitenstrategie.",
-        "body": "Fy2Press verbindet einen Shopify-Katalog mit WordPress-Inhalten und SEO-Einstellungen für den Katalog. Wählen Sie die indexierbaren Seiten und die bevorzugte Produkt-URL und integrieren Sie Produkte in hilfreiche Inhalte.",
-        "cta": "Fy2Press entdecken (Englisch)",
+        "title": "WordPress für Ihre Website. Shopify für den Verkauf.",
+        "body": "Fy2Press verbindet Ihren Shopify-Katalog mit Ihrer WordPress-Website, ohne WooCommerce zu installieren. Erstellen Sie Produktseiten, Kollektionen und Kaufratgeber mit Ihren WordPress-Werkzeugen. Shopify übernimmt Bestellungen und Bezahlung.",
+        "cta": "So funktioniert Fy2Press (Englisch)",
         "route": "home",
-        "dismiss": "Nicht mehr anzeigen"
+        "dismiss": "Nicht mehr anzeigen",
+        "note": "Starten Sie mit der kostenlosen Version. Sie benötigen eine WordPress-Website und einen Shopify-Shop, die bereits bestehen oder die Sie für Ihr Projekt einrichten. Separates Shopify-Abonnement erforderlich."
       }
     ],
     "it": [
@@ -124,11 +128,12 @@
       },
       {
         "id": "seo",
-        "title": "Presenta i tuoi prodotti con una strategia chiara per le pagine.",
-        "body": "Fy2Press unisce catalogo Shopify, contenuti WordPress e impostazioni SEO del catalogo. Scegli le pagine indicizzabili e l’URL prodotto preferito, poi integra i prodotti in contenuti utili.",
-        "cta": "Scopri Fy2Press (in inglese)",
+        "title": "La libertà di WordPress. Le vendite con Shopify.",
+        "body": "Fy2Press collega il catalogo Shopify al sito WordPress, senza installare WooCommerce. Crea pagine prodotto, collezioni e guide agli acquisti con i tuoi strumenti WordPress. Shopify gestisce ordini e pagamenti.",
+        "cta": "Scopri come funziona Fy2Press (in inglese)",
         "route": "home",
-        "dismiss": "Non mostrare più"
+        "dismiss": "Non mostrare più",
+        "note": "Inizi con la versione gratuita. Occorrono un sito WordPress e un negozio Shopify, già esistenti o da creare per il suo progetto. Abbonamento Shopify separato."
       }
     ],
     "nl": [
@@ -150,11 +155,12 @@
       },
       {
         "id": "seo",
-        "title": "Presenteer uw producten met een duidelijke paginastrategie.",
-        "body": "Fy2Press combineert een Shopify-catalogus, WordPress-inhoud en SEO-instellingen voor de catalogus. Kies welke pagina’s geïndexeerd mogen worden en welke product-URL de voorkeur heeft. Voeg daarna producten toe aan nuttige inhoud.",
-        "cta": "Ontdek Fy2Press (Engels)",
+        "title": "WordPress voor uw website. Shopify voor de verkoop.",
+        "body": "Fy2Press verbindt uw Shopify-catalogus met uw WordPress-website, zonder WooCommerce te installeren. Maak productpagina’s, collecties en koopgidsen met uw WordPress-tools. Shopify verwerkt bestellingen en betalingen.",
+        "cta": "Bekijk hoe Fy2Press werkt (Engels)",
         "route": "home",
-        "dismiss": "Niet meer tonen"
+        "dismiss": "Niet meer tonen",
+        "note": "Begin met de gratis versie. U hebt een WordPress-site en een Shopify-winkel nodig, die al bestaan of die u voor uw project aanmaakt. Een apart Shopify-abonnement is vereist."
       }
     ],
     "pt": [
@@ -176,11 +182,12 @@
       },
       {
         "id": "seo",
-        "title": "Apresente os seus produtos com uma estratégia clara de páginas.",
-        "body": "O Fy2Press combina catálogo Shopify, conteúdos WordPress e definições SEO do catálogo. Escolha as páginas que podem ser indexadas e o URL preferido do produto, depois integre os produtos em conteúdos úteis.",
-        "cta": "Conhecer o Fy2Press (em inglês)",
+        "title": "A liberdade do WordPress. As vendas com o Shopify.",
+        "body": "O Fy2Press liga o catálogo Shopify ao seu site WordPress, sem instalar o WooCommerce. Crie páginas de produto, coleções e guias de compra com as suas ferramentas WordPress. O Shopify gere as encomendas e o pagamento.",
+        "cta": "Veja como funciona o Fy2Press (em inglês)",
         "route": "home",
-        "dismiss": "Não voltar a mostrar"
+        "dismiss": "Não voltar a mostrar",
+        "note": "Comece com a versão gratuita. Precisa de um site WordPress e de uma loja Shopify, já existentes ou a criar para o seu projeto. Subscrição Shopify separada."
       }
     ],
     "ru": [
@@ -202,11 +209,12 @@
       },
       {
         "id": "seo",
-        "title": "Представляйте товары с ясной стратегией страниц.",
-        "body": "Fy2Press объединяет каталог Shopify, содержимое WordPress и настройки SEO каталога. Выберите страницы для индексации и предпочтительный URL товара, затем добавьте товары в полезные материалы.",
-        "cta": "Узнать о Fy2Press (на английском)",
+        "title": "WordPress для сайта. Shopify для продаж.",
+        "body": "Fy2Press связывает каталог Shopify с вашим сайтом WordPress без установки WooCommerce. Создавайте страницы товаров, коллекции и руководства по покупке с помощью инструментов WordPress. Заказы и оплата остаются в Shopify.",
+        "cta": "Как работает Fy2Press (на английском)",
         "route": "home",
-        "dismiss": "Больше не показывать"
+        "dismiss": "Больше не показывать",
+        "note": "Начните с бесплатной версии. Нужны сайт WordPress и магазин Shopify: существующие или созданные для вашего проекта. Подписка Shopify оплачивается отдельно."
       }
     ]
   },

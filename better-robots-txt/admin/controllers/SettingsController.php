@@ -89,7 +89,7 @@ class SettingsController {
         }
         echo '<div id="rt__app"></div>';
         echo '<template id="pagup-fy2press-discovery">';
-        \Pagup_Fy2Press_Discovery_V1::render( 'better-robots-txt' );
+        \Pagup_BetterRobots_Fy2Press_Discovery::render( 'better-robots-txt' );
         echo '</template>';
     }
 
