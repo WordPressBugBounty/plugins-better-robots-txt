@@ -4,7 +4,7 @@ Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.1.3
-Stable tag: 3.1.6
+Stable tag: 3.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -295,6 +295,9 @@ This plugin does not grant AI agents access to WordPress. PAGUP Agent Control is
 
 == Upgrade Notice ==
 
+= 3.1.7 =
+Hardens the per-post Disallow rules printed in Legacy Mode; rule paths now match each post's permalink exactly. Your other robots.txt rules and crawler settings are unchanged.
+
 = 3.1.6 =
 Improves mobile and keyboard use in Free and Pro and clarifies the Fy2Press discovery card. Existing crawler settings are preserved.
 
@@ -302,6 +305,9 @@ Improves mobile and keyboard use in Free and Pro and clarifies the Fy2Press disc
 Maintenance release: refreshes the bundled Freemius SDK to 2.13.4 and adds a contextual PAGUP Agent Control section. Your robots.txt rules and crawler settings are unchanged.
 
 == Changelog ==
+
+= 3.1.7 =
+* Hardened the per-post Disallow rules printed in Legacy Mode; each rule path now matches the post's permalink exactly (for example /sample-page/ instead of /sample-page).
 
 = 3.1.6 =
 * Improved mobile layouts and keyboard navigation in the Free and Pro settings screens.

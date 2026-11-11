@@ -422,16 +422,140 @@ trait RobotsHelper
 
     public function post_metas()
     {
-        // Individual post disallow rules
+        // Individual post disallow rules.
+        // A stored rt_disallow value only means "rule enabled" (non-empty, as before): it is never
+        // printed. Each rule is rebuilt from the permalink of a published, publicly viewable post.
         global $wpdb;
 
-        $metas = $wpdb->get_results( 
-            $wpdb->prepare("SELECT meta_value FROM $wpdb->postmeta where meta_key = %s", 'rt_disallow')
+        // Upper bound on the posts read for the public robots.txt, lowest post IDs first.
+        $limit = (int) apply_filters( 'better_robots_txt_post_rules_limit', 1000 );
+
+        if ( $limit < 1 ) {
+            return;
+        }
+
+        $post_ids = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT DISTINCT pm.post_id FROM $wpdb->postmeta pm INNER JOIN $wpdb->posts p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value NOT IN ('', '0') AND p.post_status = %s ORDER BY pm.post_id ASC LIMIT %d",
+                'rt_disallow',
+                'publish',
+                $limit
+            )
         );
 
-        if (!empty($metas)){
-            return $metas;
+        if ( empty( $post_ids ) || !is_array( $post_ids ) ) {
+            return;
         }
+
+        $post_ids = array_map( 'intval', $post_ids );
+
+        if ( function_exists( '_prime_post_caches' ) ) {
+            _prime_post_caches( $post_ids, false, true );
+        }
+
+        $rules = array();
+
+        foreach ( $post_ids as $post_id ) {
+            $rule = $this->post_rule_path( $post_id );
+
+            if ( '' !== $rule ) {
+                $rules[$rule] = true;
+            }
+        }
+
+        if (!empty($rules)){
+            return array_keys( $rules );
+        }
+    }
+
+    /**
+     * Robots.txt rule of one post, rebuilt from its own permalink.
+     *
+     * @param int $post_id Post ID.
+     * @return string Rule path, or '' when the post must not contribute a rule.
+     */
+    private function post_rule_path( $post_id )
+    {
+        $post = get_post( $post_id );
+
+        if ( !$post || 'publish' !== $post->post_status ) {
+            return '';
+        }
+
+        // The flag counts under the exact key only. The SQL comparison follows the database
+        // collation (case- and accent-insensitive), so a look-alike key would match there.
+        if ( !array_filter( (array) get_post_meta( $post->ID, 'rt_disallow' ) ) ) {
+            return '';
+        }
+
+        // is_post_publicly_viewable() needs WordPress 5.7. The post is published, so on older
+        // versions it is viewable exactly when its post type is.
+        $viewable = function_exists( 'is_post_publicly_viewable' )
+            ? is_post_publicly_viewable( $post )
+            : is_post_type_viewable( $post->post_type );
+
+        if ( !$viewable ) {
+            return '';
+        }
+
+        $permalink = get_permalink( $post );
+
+        // parse_url() rewrites control characters instead of rejecting them.
+        if ( !is_string( $permalink ) || preg_match( '/[\x00-\x20\x7F]/', $permalink ) ) {
+            return '';
+        }
+
+        $url  = wp_parse_url( $permalink );
+        $home = wp_parse_url( home_url( '/' ) );
+
+        if ( !is_array( $url ) ) {
+            return '';
+        }
+
+        // Only URLs of this site: a permalink that names a host must name the home host.
+        if ( isset( $url['host'] ) && ( empty( $home['host'] ) || strtolower( $url['host'] ) !== strtolower( $home['host'] ) ) ) {
+            return '';
+        }
+
+        $path      = isset( $url['path'] ) ? $url['path'] : '/';
+        $query     = isset( $url['query'] ) ? $url['query'] : '';
+        $home_path = isset( $home['path'] ) ? $home['path'] : '/';
+
+        // The home URL itself would disallow the whole site.
+        if ( '' === $query && rtrim( $path, '/' ) === rtrim( $home_path, '/' ) ) {
+            return '';
+        }
+
+        $rule = ( '' === $query ) ? $path : $path . '?' . $query;
+
+        // Robots.txt paths are ASCII: percent-encode raw non-ASCII bytes.
+        $rule = preg_replace_callback( '/[\x80-\xFF]/', function ( $byte ) {
+            return rawurlencode( $byte[0] );
+        }, $rule );
+
+        // A trailing slash ends the path segment. Without it, or with a query string, anchor the
+        // rule with "$" (RFC 9309) so that it cannot prefix-match unrelated URLs.
+        if ( '' !== $query || '/' !== substr( $path, -1 ) ) {
+            $rule .= '$';
+        }
+
+        return $this->is_post_rule_path( $rule ) ? $rule : '';
+    }
+
+    /**
+     * Whether a per-post rule can be printed on one "Disallow:" line.
+     *
+     * Starts with "/", printable ASCII only, no space, no "*" wildcard, no "#" comment marker,
+     * "$" only as the final end-of-pattern anchor, bounded length.
+     *
+     * @param mixed $rule Candidate rule path.
+     * @return bool
+     */
+    private function is_post_rule_path( $rule )
+    {
+        return is_string( $rule )
+            && strlen( $rule ) <= 2048
+            && 1 === preg_match( '/\A\/[\x21\x22\x25-\x29\x2B-\x7E]+\$?\z/', $rule );
     }
 
     public function network_rules($site)

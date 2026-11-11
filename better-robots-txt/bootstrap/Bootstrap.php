@@ -76,6 +76,13 @@ class Bootstrap {
      * Initialize plugin managers
      */
     private static function initializePlugin() : void {
+        // Per-post robots.txt flag: no write through the Custom Fields box, XML-RPC or REST
+        add_filter(
+            'is_protected_meta',
+            [self::class, 'protectPostRuleMeta'],
+            10,
+            3
+        );
         // Initialize Freemius customization
         self::$freemiusManager = new FreemiusManager(self::PLUGIN_CONFIG['id'], self::PLUGIN_CONFIG['slug'], self::PLUGIN_CONFIG['messages']);
         self::$freemiusManager->init();
@@ -104,6 +111,22 @@ class Bootstrap {
      */
     public static function getConfig( string $key ) : string {
         return self::PLUGIN_CONFIG[$key] ?? '';
+    }
+
+    /**
+     * Protect the rt_disallow post meta: the legacy robots.txt reads it as a per-post rule flag,
+     * so only the plugin's own metabox may write it.
+     *
+     * @param bool   $protected Whether the meta key is protected.
+     * @param string $meta_key  Meta key.
+     * @param string $meta_type Object type; empty when the caller does not name one.
+     * @return bool
+     */
+    public static function protectPostRuleMeta( $protected, $meta_key = '', $meta_type = '' ) {
+        if ( 'rt_disallow' === $meta_key && ('post' === $meta_type || empty( $meta_type )) ) {
+            return true;
+        }
+        return $protected;
     }
 
     /**

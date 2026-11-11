@@ -118,9 +118,10 @@ class RobotsControllerLegacy {
         if ( !empty( $post_metas ) && is_array( $post_metas ) ) {
             $robots_content .= "# Manual rules with Better Robots.txt Post Meta Box\n\n";
             $robots_content .= "User-agent: *\n";
-            foreach ( $post_metas as $meta ) {
-                if ( !empty( $meta->meta_value ) ) {
-                    $robots_content .= "Disallow: " . $meta->meta_value . "\n";
+            // One rule per post, rebuilt from its permalink by post_metas(); never a stored value.
+            foreach ( $post_metas as $rule ) {
+                if ( $this->is_post_rule_path( $rule ) ) {
+                    $robots_content .= "Disallow: " . $rule . "\n";
                 }
             }
             $robots_content .= "\n";
