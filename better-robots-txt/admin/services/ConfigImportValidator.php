@@ -40,6 +40,8 @@ class ConfigImportValidator
         'ChatGPT-User',
         'Claude-User',
         'Perplexity-User',
+        // ChatGPT Ads (3.1.8+): routed to mode_0.ads_module.oai_adsbot_policy.
+        'OAI-AdsBot',
     ];
 
     private const BOT_EVIDENCE_TOKENS = [
@@ -74,6 +76,9 @@ class ConfigImportValidator
         'aioseo_plugin_detected',
         'rankmath_plugin_detected',
         'sitemap_detected',
+        // ChatGPT Ads recommendation emitted by /check under intent=advertising.
+        'existing_oai_adsbot_blocked_for_advertising_intent',
+        'advertising_intent_declared',
     ];
 
     /**
@@ -485,6 +490,84 @@ class ConfigImportValidator
                     break;
             }
         }
+
+        $this->rejectContradictoryRecommendations($recommendations, $result['errors']);
+    }
+
+    /**
+     * Refuse a file where two recommendations set the same setting to different
+     * values: applied in order, the last one would win silently. Identical repeats
+     * are harmless and accepted.
+     *
+     * @param array<int|string, mixed> $recommendations
+     * @param array<int, string> $errors
+     */
+    private function rejectContradictoryRecommendations(array $recommendations, array &$errors): void
+    {
+        $first = [];
+
+        foreach ($recommendations as $index => $recommendation) {
+            $setting = is_array($recommendation) ? $this->recommendedSetting($recommendation) : null;
+
+            if ($setting === null) {
+                continue;
+            }
+
+            [$key, $value, $label] = $setting;
+
+            if (!isset($first[$key])) {
+                $first[$key] = ['index' => $index, 'value' => $value];
+                continue;
+            }
+
+            if ($first[$key]['value'] !== $value) {
+                $errors[] = "recommendations[{$first[$key]['index']}] and recommendations[{$index}] contradict each other for {$label}.";
+            }
+        }
+    }
+
+    /**
+     * The setting a recommendation writes, the value it asks for and a label for
+     * messages. ai_signals only enables a feature and sitemap_policy only turns
+     * detection on, so their recommendations cannot disagree.
+     *
+     * @param array<string, mixed> $recommendation
+     * @return array{0: string, 1: string, 2: string}|null
+     */
+    private function recommendedSetting(array $recommendation): ?array
+    {
+        $type = $recommendation['type'] ?? null;
+
+        // A string only: PHP 7.4 compares a number loosely with each case label.
+        if (!is_string($type)) {
+            return null;
+        }
+
+        switch ($type) {
+            case 'ai_crawler_rule':
+                $target = $recommendation['target'] ?? null;
+                $scope = $recommendation['scope'] ?? null;
+                $action = $recommendation['action'] ?? null;
+
+                if (!is_string($target) || !is_string($scope) || !is_string($action)) {
+                    return null;
+                }
+
+                return ["ai_crawler_rule|{$target}|{$scope}", $action, "{$target} at {$scope}"];
+            case 'search_engine_policy':
+                $level = $recommendation['level'] ?? null;
+
+                return is_string($level) ? ['search_engine_policy', $level, 'the search engine policy'] : null;
+            case 'crawl_delay':
+                $seconds = $recommendation['seconds'] ?? null;
+
+                // Compared as applied: values clamped to the same delay agree.
+                return is_int($seconds)
+                    ? ['crawl_delay', (string) max(1, min(self::LOCAL_CRAWL_DELAY_MAX, $seconds)), 'the crawl delay']
+                    : null;
+        }
+
+        return null;
     }
 
     /**

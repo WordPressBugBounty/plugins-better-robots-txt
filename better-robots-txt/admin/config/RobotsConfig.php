@@ -58,8 +58,9 @@ class RobotsConfig
     // =========================================================================
 
     /**
-     * WordPress core paths that should be allowed for all user agents
-     * These ensure proper functionality while protecting sensitive areas
+     * WordPress core paths allowed in the general "User-agent: *" group.
+     * Crawlers that have their own group do not inherit these rules (RFC 9309):
+     * a specific group replaces the general group for that crawler.
      */
     const BASE_ALLOW_PATHS = [
         '/wp-admin/admin-ajax.php',  // Required for AJAX functionality
@@ -267,6 +268,10 @@ class RobotsConfig
         'gptbot'                => ['user_agent' => 'GPTBot', 'category' => 'training'],
         'oai_searchbot'         => ['user_agent' => 'OAI-SearchBot', 'category' => 'search_discovery'],
         'chatgpt_user'          => ['user_agent' => 'ChatGPT-User', 'category' => 'user_action'],
+        // Advertising landing-page review. Controlled only by the dedicated
+        // mode_0.ads_module.oai_adsbot_policy preference (OAIAdsBotPolicy), never
+        // by the training, search or user-action lists.
+        'oai_adsbot'            => ['user_agent' => 'OAI-AdsBot', 'category' => 'advertising'],
         'claudebot'             => ['user_agent' => 'ClaudeBot', 'category' => 'training'],
         'claude_web'            => ['user_agent' => 'Claude-Web', 'category' => 'training'],
         'claude_searchbot'      => ['user_agent' => 'Claude-SearchBot', 'category' => 'search_discovery'],
@@ -1174,15 +1179,26 @@ class RobotsConfig
     }
 
     /**
-     * Generate global base rules for WordPress
-     * These rules apply to all user agents and are always included
+     * Generate the general "User-agent: *" group with the WordPress base rules.
      *
+     * The group is always included. It applies only to crawlers that have no
+     * group of their own: a crawler named in a specific group ignores it and
+     * inherits none of these exclusions (RFC 9309, section 2.2.1).
+     *
+     * @param array  $rules         Core rule toggles.
+     * @param string $contentSignal Optional "Content-signal: ..." value. It is
+     *                              written inside this group, which has rules, so
+     *                              strict parsers cannot merge it with the next group.
      * @return string Robots.txt formatted base rules
      */
-    public static function generateBaseRules($rules = [])
+    public static function generateBaseRules($rules = [], string $contentSignal = '')
     {
         $output = "# Global base rules\n";
         $output .= "User-agent: *\n";
+
+        if ($contentSignal !== '') {
+            $output .= "Content-signal: {$contentSignal}\n";
+        }
 
         // Add Allow rules
         foreach (self::BASE_ALLOW_PATHS as $path) {
@@ -1334,7 +1350,8 @@ class RobotsConfig
     }
 
     /**
-     * Generate Allow rules for specific paths for all user agents
+     * Generate Allow rules for specific paths in general "User-agent: *" groups.
+     * Crawlers that have their own group do not inherit them.
      * Reference: https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt
      *
      * @param array $paths List of paths to allow

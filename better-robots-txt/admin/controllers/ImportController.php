@@ -57,10 +57,15 @@ class ImportController
         $proposedRobots = $isPro
             ? $robotsController->generate($resolved['proposed_settings'])
             : $robotsController->generateProPreview($resolved['proposed_settings']);
+        $adsbotReport = $robotsController->reportLastOAIAdsBotPlan($resolved['proposed_settings'], (string) $proposedRobots);
         $warnings = array_values(array_merge($validation['warnings'], $resolved['warnings'], $previewWarnings));
 
         if (!$isPro) {
             $warnings[] = 'The proposed robots.txt preview shows the Pro output that will be applied after upgrading. Your current robots.txt remains unchanged until a Pro user applies the import.';
+        }
+
+        if (empty($adsbotReport['publishable'])) {
+            $warnings[] = 'ChatGPT Ads: the proposed OAI-AdsBot choice contradicts other rules, so it cannot be applied until they are adjusted.';
         }
 
         wp_send_json_success([
@@ -74,6 +79,7 @@ class ImportController
                 'manual_followups' => $resolved['manual_followups'],
                 'profile_scores' => $resolved['profile_scores'],
                 'has_changes' => $resolved['has_changes'],
+                'adsbot' => $adsbotReport,
             ],
             'fresh_audit_url' => $this->buildFreshAuditUrl($config, (string) ($validation['domain']['site'] ?? '')),
             'history_state' => $this->history->getPublicState(),
@@ -112,6 +118,18 @@ class ImportController
         $hadPreviousSettings = is_array($currentOption);
         $previousSettings = is_array($currentOption) ? $currentOption : [];
         $proposedSettings = $resolved['proposed_settings'];
+
+        // ChatGPT Ads: import bypasses the settings form, so it runs the same
+        // OAI-AdsBot publication check before anything is written.
+        $adsbotReport = (new RobotsController())->analyzeOAIAdsBotPolicy($proposedSettings);
+        if (empty($adsbotReport['publishable'])) {
+            wp_send_json_error([
+                'message' => 'ChatGPT Ads: the proposed OAI-AdsBot choice contradicts other rules on this site. Nothing was applied.',
+                'code' => 'adsbot_conflict',
+                'adsbot' => $adsbotReport,
+                'validation' => $this->validationResponse($validation),
+            ], 409);
+        }
 
         $physicalPreflight = $this->validatePhysicalRobotsFileSync($proposedSettings);
         if (empty($physicalPreflight['ok'])) {

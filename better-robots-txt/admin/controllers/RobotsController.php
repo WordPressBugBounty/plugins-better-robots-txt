@@ -12,12 +12,25 @@ namespace Pagup\BetterRobots\Controllers;
 
 use Pagup\BetterRobots\Core\Option;
 use Pagup\BetterRobots\Config\RobotsConfig;
+use Pagup\BetterRobots\Config\OAIAdsBotPolicy;
 class RobotsController {
     /**
      * Render paid-tier directives for non-persistent previews without changing
      * the real license gates used by served robots.txt output.
      */
     private bool $forceProPreview = false;
+
+    /**
+     * Content-signal value written inside the general group, or ''.
+     */
+    private string $contentSignal = '';
+
+    /**
+     * OAI-AdsBot plan computed by the last generate() call.
+     *
+     * @var array<string, mixed>|null
+     */
+    private ?array $lastOAIAdsBotPlan = null;
 
     /**
      * Constructor - hooks into WordPress
@@ -70,6 +83,8 @@ class RobotsController {
      */
     public function generate( $options = null ) {
         $settings = $options ?? Option::all();
+        $this->lastOAIAdsBotPlan = null;
+        $this->contentSignal = '';
         if ( !isset( $settings['mode_0'] ) ) {
             return $this->getDefaultRobotsTxt();
         }
@@ -146,6 +161,9 @@ class RobotsController {
             }
         }
         $output = '';
+        // The content signal belongs to the general group (Step 1), which is built
+        // before the AI step that owns the setting.
+        $this->contentSignal = $this->contentSignalValue( $mode0['ai_module'] ?? [] );
         // Generate rules in the order defined by config
         foreach ( RobotsConfig::STEP_ORDER as $step ) {
             $method = "generate_{$step}";
@@ -170,7 +188,10 @@ class RobotsController {
         if ( defined( RobotsConfig::class . '::SSA_SIGNATURE' ) ) {
             $output = rtrim( $output, "\n" ) . "\n\n" . ltrim( RobotsConfig::SSA_SIGNATURE, "\n" );
         }
-        return $this->sanitize( $output );
+        // ChatGPT Ads: the OAI-AdsBot preference is planned and checked on the exact
+        // text that is served (after consolidation and sanitizing), so no later
+        // step can regroup or rewrite the published group.
+        return $this->applyOAIAdsBotPolicy( $this->sanitize( $output ), $mode0 );
     }
 
     /**
@@ -186,6 +207,76 @@ class RobotsController {
         } finally {
             $this->forceProPreview = $previous;
         }
+    }
+
+    /**
+     * Report how the OAI-AdsBot preference resolves for a set of settings.
+     *
+     * Runs the real generator, so the report describes the rules that would be
+     * served (or, with $proPreview, what a Pro user would get after applying).
+     *
+     * @param mixed  $options    Settings to evaluate; defaults to the stored option.
+     * @param string $path       Landing-page path or URL to evaluate.
+     * @param bool   $proPreview Evaluate the Pro preview instead of the served output.
+     * @return array<string, mixed>
+     */
+    public function analyzeOAIAdsBotPolicy( $options = null, string $path = '/', bool $proPreview = false ) : array {
+        $settings = $options ?? Option::all();
+        $content = ( $proPreview ? $this->generateProPreview( $settings ) : $this->generate( $settings ) );
+        return $this->reportLastOAIAdsBotPlan( $settings, (string) $content, $path );
+    }
+
+    /**
+     * Report for the content returned by the last generate() call.
+     *
+     * @param mixed $settings Settings passed to that call.
+     * @return array<string, mixed>
+     */
+    public function reportLastOAIAdsBotPlan( $settings, string $content, string $path = '/' ) : array {
+        $plan = $this->lastOAIAdsBotPlan ?? OAIAdsBotPolicy::plan( '', OAIAdsBotPolicy::INHERIT );
+        return OAIAdsBotPolicy::report(
+            $settings,
+            $plan,
+            $content,
+            $path
+        );
+    }
+
+    /**
+     * Apply the OAI-AdsBot preference to the final robots.txt text.
+     *
+     * @param mixed $mode0 Stored mode_0; a damaged value reads as inherit.
+     */
+    private function applyOAIAdsBotPolicy( string $output, $mode0 ) : string {
+        $result = OAIAdsBotPolicy::publish( $output, OAIAdsBotPolicy::fromMode0( $mode0 ) );
+        $this->lastOAIAdsBotPlan = $result['plan'];
+        return $result['content'];
+    }
+
+    /**
+     * Content-signal value for the general group, with the same gates as before:
+     * a paid build, Pro access, the feature enabled and not managed by Cloudflare.
+     *
+     * @param mixed $settings AI module settings.
+     */
+    private function contentSignalValue( $settings ) : string {
+        if ( !is_array( $settings ) || !$this->isPremiumBuild() || !$this->hasProAccess() ) {
+            return '';
+        }
+        $contentSignals = $settings['content_signals'] ?? [];
+        if ( !is_array( $contentSignals ) || empty( $contentSignals['enabled'] ) || !empty( $contentSignals['cloudflare_managed'] ) ) {
+            return '';
+        }
+        $signalPairs = [];
+        foreach ( ['search', 'ai_input', 'ai_train'] as $signalKey ) {
+            $value = $contentSignals[$signalKey] ?? 'not-set';
+            if ( !in_array( $value, ['yes', 'no'], true ) ) {
+                continue;
+            }
+            $directive = str_replace( '_', '-', $signalKey );
+            $signalPairs[] = "{$directive}={$value}";
+        }
+        return implode( ',', $signalPairs );
     }
 
     private function isPremiumBuild() : bool {
@@ -225,10 +316,10 @@ class RobotsController {
         if ( !empty( $output ) ) {
             $output .= "\n";
             // Add Global Base Rules immediately after sitemaps
-            $output .= RobotsConfig::generateBaseRules( $settings['core_rules'] ?? [] );
+            $output .= RobotsConfig::generateBaseRules( $settings['core_rules'] ?? [], $this->contentSignal );
         } else {
             // Even if no sitemaps, we want base rules
-            $output .= RobotsConfig::generateBaseRules( $settings['core_rules'] ?? [] );
+            $output .= RobotsConfig::generateBaseRules( $settings['core_rules'] ?? [], $this->contentSignal );
         }
         return $output;
     }
@@ -326,23 +417,10 @@ class RobotsController {
                     }
                 }
             }
-            $contentSignals = $settings['content_signals'] ?? [];
-            if ( $this->hasProAccess() && is_array( $contentSignals ) && !empty( $contentSignals['enabled'] ) && empty( $contentSignals['cloudflare_managed'] ) ) {
-                $signalPairs = [];
-                foreach ( ['search', 'ai_input', 'ai_train'] as $signalKey ) {
-                    $value = $contentSignals[$signalKey] ?? 'not-set';
-                    if ( !in_array( $value, ['yes', 'no'], true ) ) {
-                        continue;
-                    }
-                    $directive = str_replace( '_', '-', $signalKey );
-                    $signalPairs[] = "{$directive}={$value}";
-                }
-                if ( !empty( $signalPairs ) ) {
-                    $output .= "# AI Content Usage Signals\n";
-                    $output .= "User-agent: *\n";
-                    $output .= "Content-signal: " . implode( ',', $signalPairs ) . "\n\n";
-                }
-            }
+            // Content signals are written inside the general group by
+            // generate_global_settings() (see contentSignalValue()). A separate
+            // "User-agent: *" group holding only a Content-signal line has no rule,
+            // so RFC 9309 parsers merged it with the next crawler group.
             $customCrawlers = $this->parseCustomUserAgents( $settings['custom_ai_crawlers'] ?? '' );
             if ( $this->hasProAccess() && !empty( $customCrawlers ) ) {
                 $output .= RobotsConfig::generateDisallowRules( $customCrawlers, 'Custom AI Crawlers' );

@@ -1,18 +1,36 @@
 === Better Robots.txt - AI-Ready Crawl Control & Bot Governance ===
 Contributors: pagup, the-rock, freemius
-Tags: robots.txt, seo, llms.txt, ai crawlers, bot blocker
+Tags: robots.txt, seo, llms.txt, ai crawlers, chatgpt ads
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.1.3
-Stable tag: 3.1.7
+Stable tag: 3.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace the default WordPress robots.txt workflow with a smarter, structured version you can preview before publishing, with Free, Pro, and Premium editions.
+Manage robots.txt for ChatGPT Ads, AI search and training crawlers. Preview OAI-AdsBot rules and keep your training choices separate.
 
 == Description ==
 
-Better Robots.txt replaces the default WordPress robots.txt workflow with a smarter, structured version you can configure and preview before publishing.
+Better Robots.txt replaces the default WordPress robots.txt workflow with a smarter, structured version you can configure and preview before publishing. Configure advertising, search and training crawler preferences while keeping your site exclusions visible.
+
+Running ChatGPT Ads? Manage your OAI-AdsBot policy without changing your GPTBot training preference. The dedicated advertising control is available in every edition, including the free plugin.
+
+Choose whether to follow existing rules, allow public pages while preserving site exclusions, or disallow advertising crawling. Review the result before saving. Existing policy choices are preserved when the plugin is updated.
+
+## Crawler access for ChatGPT Ads
+
+* Dedicated OAI-AdsBot policy control in Step 11 (Ads & Revenue), in Free, Pro and Premium.
+* Advertising choices kept separate from AI search and training preferences.
+* A preview of the generated rules, and the changes since your last save, before publication.
+* Existing path exclusions preserved when allowing public pages: the OAI-AdsBot group copies your general rules and never adds a blanket Allow: /.
+* Contradictory custom rules are reported, and the choice is not saved until they are resolved.
+
+OpenAI uses OAI-AdsBot to review the landing pages submitted as ads on ChatGPT. Your hosting, firewall or CDN must also accept those requests. Better Robots.txt publishes crawl directives; it does not manage campaigns, verify OpenAI's access or grant ad approval.
+
+[Read the ChatGPT Ads access guide](https://better-robots.com/chatgpt-ads-robots-txt).
+[Check your OAI-AdsBot policy](https://better-robots.com/oai-adsbot-checker).
+[Troubleshoot an inaccessible landing page](https://better-robots.com/chatgpt-ads-website-unavailable).
 
 Instead of a blank textarea, you get a guided wizard with presets, plain-language explanations, and a final Review & Save step so you can inspect the generated robots.txt before it goes live.
 
@@ -61,6 +79,7 @@ Better Robots.txt helps you manage:
 - WooCommerce crawl cleanup
 - CSS, JavaScript, and image crawling rules
 - Social media preview crawlers
+- ChatGPT Ads crawler access (OAI-AdsBot)
 - ads.txt and app-ads.txt allowance
 - llms.txt generation
 - Advanced directives such as crawl-delay and custom rules
@@ -76,17 +95,20 @@ Better Robots.txt is available in three editions:
 
 Some options shown in the interface are marked Free, Pro, or Premium so users can immediately understand which modules belong to each edition.
 
+The OAI-AdsBot advertising policy control and its generated-rule preview are included in every edition: Free, Pro and Premium. Advanced import and other paid features retain the availability described for each plan.
+
 ## AI crawler controls by edition
 
 The Free edition lets site owners choose a basic global policy for AI search and discovery crawlers: allow or block. AI training crawlers remain separated from AI search crawlers, so a site can block training use while still allowing AI-powered search and answer discovery.
 
 The Pro and Premium editions add advanced controls, including per-bot AI crawler rules, custom user agents, AI usage signals, llms.txt, and additional machine-readable governance files.
 
-Better Robots.txt separates AI-related agents into three practical families:
+Better Robots.txt separates AI-related agents into practical families:
 
 - AI training crawlers, such as GPTBot, Google-Extended, and ClaudeBot.
 - AI search and discovery crawlers, such as OAI-SearchBot, PerplexityBot, and Claude-SearchBot.
 - User-action fetchers, such as ChatGPT-User, Perplexity-User, and Claude-User.
+- Advertising crawlers, such as OAI-AdsBot, which reviews ChatGPT ad landing pages. It has its own setting in Step 11, separate from training and search.
 
 User-action fetchers are triggered by user requests. Depending on the provider, robots.txt may not apply to those fetches in the same way as it applies to automated crawlers. For stronger enforcement, combine robots.txt with server logs, WAF rules, provider verification, or IP-based controls where available.
 
@@ -184,6 +206,7 @@ Use Better Robots.txt if you want to:
 - WooCommerce crawl cleanup options
 - CSS, JavaScript, and image crawling rules
 - Social media preview crawler controls
+- Dedicated ChatGPT Ads (OAI-AdsBot) policy control in every edition
 - ads.txt and app-ads.txt allowance
 - Optional llms.txt generation
 - Consolidated output option
@@ -221,7 +244,41 @@ Better Robots.txt is one component of a broader digital readability practice tha
 6. Review the generated robots.txt preview.
 7. Save your changes.
 
+To configure advertising crawling, open Step 11 (Ads & Revenue) and its ChatGPT Ads section. Choose the OAI-AdsBot policy, review the generated rules in Step 14 and save your changes. If a physical robots.txt file or a hosting rule overrides WordPress output, review that configuration before assuming the new policy is publicly served.
+
 == Frequently Asked Questions ==
+
+= What is OAI-AdsBot? =
+
+OAI-AdsBot is the OpenAI crawler that reviews the landing pages submitted as ads on ChatGPT. Better Robots.txt provides a dedicated setting for its declared crawl policy. Advertising access is a separate choice from the GPTBot training preference.
+
+= Is the advertising crawler control available in the free edition? =
+
+Yes. The OAI-AdsBot policy control and its generated-rule preview are available in Free, Pro and Premium. You do not need a paid license to configure this setting.
+
+= Can I prepare my site for ChatGPT Ads while keeping GPTBot disallowed? =
+
+Yes. GPTBot is OpenAI's training crawler and stays a separate choice. OpenAI's ads documentation asks advertisers not to block OAI-AdsBot or OAI-SearchBot: review both settings, then check the published rules for the exact landing-page URL.
+
+= What does Follow existing rules mean? =
+
+It adds no OAI-AdsBot rule. A custom OAI-AdsBot group may already apply; otherwise, the general robots.txt rules decide. It does not automatically mean that crawling is allowed. Existing installations keep this behaviour until an administrator chooses another option.
+
+= Does Allow public pages remove my site exclusions? =
+
+No. This setting copies your general rules into an OAI-AdsBot group, so a page excluded for all crawlers stays excluded, and a site closed with Disallow: / stays closed. The preview shows the resulting rules before you save.
+
+= Does an Allow rule fix an HTTP 403 response? =
+
+Not by itself. A hosting, server, firewall or CDN rule may still refuse the request. Check the affected URL and the matching logs. A diagnostic request using a crawler's User-Agent string does not verify the identity or access of OpenAI's actual crawler.
+
+= Is this the same as allowing ads.txt or app-ads.txt? =
+
+No. Those files declare which ad networks may sell your ad space. The OAI-AdsBot control concerns crawling of advertising landing pages. The settings serve different purposes.
+
+= Does Better Robots.txt guarantee ad approval, or is it an OpenAI product? =
+
+No to both. It helps you manage crawl policy and understand access issues; ad review, account eligibility and delivery are decisions made outside the plugin. Better Robots.txt is developed by Pagup and is not affiliated with or endorsed by OpenAI.
 
 = Does this plugin create or manage robots.txt? =
 
@@ -295,6 +352,9 @@ This plugin does not grant AI agents access to WordPress. PAGUP Agent Control is
 
 == Upgrade Notice ==
 
+= 3.1.8 =
+Adds a ChatGPT Ads (OAI-AdsBot) crawl-policy control in every edition. Your robots.txt stays the same until you choose a policy, except on Pro sites using AI content signals, where the signal moves into the general group.
+
 = 3.1.7 =
 Hardens the per-post Disallow rules printed in Legacy Mode; rule paths now match each post's permalink exactly. Your other robots.txt rules and crawler settings are unchanged.
 
@@ -305,6 +365,18 @@ Improves mobile and keyboard use in Free and Pro and clarifies the Fy2Press disc
 Maintenance release: refreshes the bundled Freemius SDK to 2.13.4 and adds a contextual PAGUP Agent Control section. Your robots.txt rules and crawler settings are unchanged.
 
 == Changelog ==
+
+= 3.1.8 =
+* Added a dedicated OAI-AdsBot (ChatGPT Ads) crawl-policy control in Step 11, in Free, Pro and Premium: follow existing rules, allow public pages while keeping site exclusions, or disallow OAI-AdsBot crawling.
+* Kept advertising preferences separate from training, search and user-triggered crawler settings; an advertising change leaves the other crawlers' decisions unchanged.
+* Preserved existing policies during upgrades: a missing setting means Follow existing rules, and nothing is written until you choose.
+* Saving or importing now stops when custom rules contradict the selected OAI-AdsBot policy, and lists the rules to adjust.
+* Added a ChatGPT Ads status panel and a "Changes since the last save" comparison in Review & Save.
+* Import (Pro): OAI-AdsBot recommendations from /check files that require 3.1.8 are applied to the dedicated setting.
+* Fixed (Pro): saving unrelated settings no longer turns WordPress search-engine visibility back on; the safeguard applies when you request it.
+* Fixed (Pro): in physical-file mode, saving no longer overwrites a manually managed robots.txt file.
+* Fixed (Pro): AI content signals are now written inside the general group, so strict robots.txt parsers no longer merge them with the next crawler group.
+* The upgrade banner no longer lists ads.txt and app-ads.txt rules as a paid feature: they are part of the free edition.
 
 = 3.1.7 =
 * Hardened the per-post Disallow rules printed in Legacy Mode; each rule path now matches the post's permalink exactly (for example /sample-page/ instead of /sample-page).

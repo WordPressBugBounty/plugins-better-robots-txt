@@ -4,6 +4,7 @@ namespace Pagup\BetterRobots\Controllers;
 
 use Pagup\BetterRobots\Core\Option;
 use Pagup\BetterRobots\Core\AgentControl;
+use Pagup\BetterRobots\Config\OAIAdsBotPolicy;
 use Pagup\BetterRobots\Traits\Sitemap;
 use Pagup\BetterRobots\Traits\RobotsHelper;
 use Pagup\BetterRobots\Traits\SettingHelper;
@@ -291,13 +292,35 @@ class SettingsController {
             ] );
             wp_die();
         }
-        if ( rtf_fs()->is__premium_only() && rtf_fs()->is_plan_or_trial( 'betterrobotstxtpro' ) && !empty( $settings['mode_0']['advanced_settings']['ensure_search_engine_visibility'] ) ) {
-            update_option( 'blog_public', true );
+        // ChatGPT Ads: an older form that omits the key keeps the stored choice.
+        $settings = $this->preserve_omitted_oai_adsbot_policy( $settings );
+        // Refuse a contradictory OAI-AdsBot policy before any write.
+        $adsbot_report = $this->oai_adsbot_report( $settings );
+        if ( empty( $adsbot_report['publishable'] ) ) {
+            wp_send_json_error( $this->oai_adsbot_conflict_payload( $adsbot_report ) );
+            wp_die();
         }
-        // Save to database
-        $result = update_option( 'robots_txt', $settings );
-        // Handle physical robots.txt file if needed
-        if ( isset( $settings['mode_0']['robotstxt_infrastructure']['file_mode'] ) || isset( $settings['mode_0']['global_settings']['robots_txt_type'] ) ) {
+        if ( rtf_fs()->is__premium_only() && rtf_fs()->is_plan_or_trial( 'betterrobotstxtpro' ) && !empty( $settings['mode_0']['advanced_settings']['ensure_search_engine_visibility'] ) && $this->search_visibility_requested() ) {
+            update_option( 'blog_public', true );
+            // update_option() also returns false when the site is already visible, so
+            // check the outcome: a request the database refuses saves nothing.
+            if ( !get_option( 'blog_public' ) ) {
+                wp_send_json_error( [
+                    'code'          => 'search_visibility_failed',
+                    'message'       => 'The site could not be made visible to search engines. Nothing was saved.',
+                    'physical_file' => $this->get_physical_file_status(),
+                    'blog_public'   => false,
+                ] );
+                wp_die();
+            }
+        }
+        // Save to database. update_option() also returns false when the stored value is
+        // already this one (a save that only applies the visibility request): that is a
+        // success. A failed write leaves another value stored and stays an error.
+        $result = update_option( 'robots_txt', $settings ) || get_option( 'robots_txt' ) === $settings;
+        // Handle physical robots.txt file if needed, only with settings that are stored:
+        // a refused save must not publish the settings it refused.
+        if ( $result && (isset( $settings['mode_0']['robotstxt_infrastructure']['file_mode'] ) || isset( $settings['mode_0']['global_settings']['robots_txt_type'] )) ) {
             $this->handle_physical_robots_file( $settings );
         }
         if ( $result ) {
@@ -306,6 +329,7 @@ class SettingsController {
                 'message'       => 'Settings saved successfully',
                 'physical_file' => $this->get_physical_file_status(),
                 'blog_public'   => (bool) get_option( 'blog_public' ),
+                'adsbot'        => $adsbot_report,
             ] );
         } else {
             wp_send_json_error( [
@@ -315,6 +339,94 @@ class SettingsController {
             ] );
         }
         wp_die();
+    }
+
+    /**
+     * Keep the stored OAI-AdsBot preference when a save omits the key.
+     *
+     * An ordinary save replaces the whole option, so an outdated tab or bundle
+     * would otherwise drop the choice. Import rollback restores its backup through
+     * its own path and still restores an absent key exactly.
+     *
+     * @param array $settings Normalized settings about to be saved.
+     * @return array
+     */
+    private function preserve_omitted_oai_adsbot_policy( $settings ) {
+        if ( !is_array( $settings ) || OAIAdsBotPolicy::storedValue( $settings ) !== null ) {
+            return $settings;
+        }
+        if ( !isset( $settings['mode_0'] ) || !is_array( $settings['mode_0'] ) ) {
+            return $settings;
+        }
+        $stored = Option::all();
+        if ( !is_array( $stored ) || ($stored['settings_version'] ?? '') !== '3.0' || !OAIAdsBotPolicy::isExplicit( $stored ) ) {
+            return $settings;
+        }
+        if ( !isset( $settings['mode_0']['ads_module'] ) || !is_array( $settings['mode_0']['ads_module'] ) ) {
+            $settings['mode_0']['ads_module'] = [];
+        }
+        $settings['mode_0']['ads_module']['oai_adsbot_policy'] = OAIAdsBotPolicy::storedValue( $stored );
+        return $settings;
+    }
+
+    /**
+     * OAI-AdsBot report for settings, based on the rules that would be served.
+     *
+     * @param array  $settings
+     * @param string $path Landing-page path to evaluate.
+     * @return array<string, mixed>
+     */
+    private function oai_adsbot_report( $settings, $path = '/' ) {
+        $robots_controller = new \Pagup\BetterRobots\Controllers\RobotsController();
+        return $robots_controller->analyzeOAIAdsBotPolicy( $settings, OAIAdsBotPolicy::normalizeExaminedPath( $path ) );
+    }
+
+    /**
+     * Error payload returned when the OAI-AdsBot choice cannot be published.
+     *
+     * @param array<string, mixed> $report
+     * @return array<string, mixed>
+     */
+    private function oai_adsbot_conflict_payload( $report ) {
+        $indeterminate = ($report['status'] ?? '') === OAIAdsBotPolicy::STATUS_INDETERMINATE;
+        return [
+            'code'    => ( $indeterminate ? 'adsbot_indeterminate' : 'adsbot_conflict' ),
+            'message' => ( $indeterminate ? 'ChatGPT Ads: the robots.txt rules cannot be interpreted with certainty for OAI-AdsBot. Review the custom rules listed, then save again. Nothing was saved.' : 'ChatGPT Ads: other rules contradict the OAI-AdsBot choice. Remove or adjust them, or choose "Follow existing rules", then save again. Nothing was saved.' ),
+            'adsbot'  => $report,
+        ];
+    }
+
+    /**
+     * Whether this save explicitly asks to make the site visible to search engines.
+     *
+     * The switch value alone is not a request: defaults, presets and older options
+     * all hydrate it to true, and an unrelated change (for example the ChatGPT Ads
+     * choice) must not open a site an administrator kept private.
+     *
+     * @return bool
+     */
+    private function search_visibility_requested() {
+        return isset( $_POST['apply_search_engine_visibility'] ) && (string) wp_unslash( $_POST['apply_search_engine_visibility'] ) === '1';
+    }
+
+    /**
+     * Reject an OAI-AdsBot policy outside inherit, allow and block.
+     *
+     * @param array $data
+     * @return string Error message, or '' when valid.
+     */
+    private function validate_oai_adsbot_policy( $data ) {
+        if ( !isset( $data['mode_0'] ) || !is_array( $data['mode_0'] ) || !array_key_exists( 'ads_module', $data['mode_0'] ) ) {
+            return '';
+        }
+        $ads = $data['mode_0']['ads_module'];
+        if ( !is_array( $ads ) ) {
+            return 'Invalid Ads & Revenue settings.';
+        }
+        if ( array_key_exists( 'oai_adsbot_policy', $ads ) && !OAIAdsBotPolicy::isValid( $ads['oai_adsbot_policy'] ) ) {
+            return 'Invalid OAI-AdsBot policy. Allowed values: inherit, allow, block.';
+        }
+        return '';
     }
 
     /**
@@ -349,12 +461,15 @@ class SettingsController {
             ] );
             wp_die();
         }
+        $settings = $this->preserve_omitted_oai_adsbot_policy( $settings );
+        $adsbot_path = OAIAdsBotPolicy::normalizeExaminedPath( ( isset( $_POST['adsbot_path'] ) ? wp_unslash( $_POST['adsbot_path'] ) : '/' ) );
         // Generate robots.txt content
         $robots_controller = new \Pagup\BetterRobots\Controllers\RobotsController();
         $content = $robots_controller->generate( $settings );
         wp_send_json_success( [
             'content' => $content,
             'message' => 'Preview generated',
+            'adsbot'  => $robots_controller->reportLastOAIAdsBotPlan( $settings, (string) $content, $adsbot_path ),
         ] );
         wp_die();
     }
@@ -452,10 +567,18 @@ class SettingsController {
         ], true ) ) {
             $errors[] = 'Invalid active mode';
         }
-        // Validate mode_0 structure if present
-        if ( isset( $data['mode_0'] ) ) {
+        // A v3 save replaces the whole option: without mode_0 it would erase every
+        // setting, the OAI-AdsBot choice included. The admin UI always sends it.
+        if ( !isset( $data['mode_0'] ) || !is_array( $data['mode_0'] ) ) {
+            $errors[] = 'Missing mode_0 settings';
+        } else {
             $mode0_errors = $this->validate_mode_0( $data['mode_0'] );
             $errors = array_merge( $errors, $mode0_errors );
+        }
+        // ChatGPT Ads: closed list of OAI-AdsBot policies.
+        $adsbot_error = $this->validate_oai_adsbot_policy( $data );
+        if ( $adsbot_error !== '' ) {
+            $errors[] = $adsbot_error;
         }
         return $errors;
     }

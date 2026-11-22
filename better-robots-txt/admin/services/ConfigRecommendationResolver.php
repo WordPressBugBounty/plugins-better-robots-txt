@@ -1,6 +1,8 @@
 <?php
 namespace Pagup\BetterRobots\Services;
 
+use Pagup\BetterRobots\Config\OAIAdsBotPolicy;
+
 class ConfigRecommendationResolver
 {
     private const LOCAL_CRAWL_DELAY_MAX = 86400;
@@ -139,6 +141,11 @@ class ConfigRecommendationResolver
     {
         $target = (string) ($recommendation['target'] ?? '');
         $action = (string) ($recommendation['action'] ?? '');
+
+        if ($target === OAIAdsBotPolicy::USER_AGENT && in_array($action, ['allow', 'disallow'], true)) {
+            return $this->applyOAIAdsBotRule($settings, $recommendation, $action);
+        }
+
         $mapping = self::TARGET_MAP[$target] ?? null;
 
         if (!$mapping || !in_array($action, ['allow', 'disallow'], true)) {
@@ -170,6 +177,44 @@ class ConfigRecommendationResolver
             'from' => $old,
             'to' => $action,
             'label' => $this->formatCrawlerRuleLabel($target, $action),
+        ];
+    }
+
+    /**
+     * ChatGPT Ads: route an OAI-AdsBot recommendation to its dedicated preference.
+     *
+     * The import vocabulary (allow | disallow) maps explicitly onto the stored
+     * values (allow | block). custom_bots is never used for this crawler, and a
+     * file without an OAI-AdsBot recommendation leaves the preference untouched.
+     *
+     * @param array<string, mixed> $settings
+     * @param array<string, mixed> $recommendation
+     * @return array<string, mixed>
+     */
+    private function applyOAIAdsBotRule(array &$settings, array $recommendation, string $action): array
+    {
+        $old = OAIAdsBotPolicy::fromSettings($settings);
+        $new = $action === 'disallow' ? OAIAdsBotPolicy::BLOCK : OAIAdsBotPolicy::ALLOW;
+
+        if (!isset($settings['mode_0']['ads_module']) || !is_array($settings['mode_0']['ads_module'])) {
+            $settings['mode_0']['ads_module'] = [];
+        }
+
+        $settings['mode_0']['ads_module']['oai_adsbot_policy'] = $new;
+
+        return [
+            'status' => 'applied',
+            'id' => (string) ($recommendation['id'] ?? ''),
+            'type' => 'ai_crawler_rule',
+            'target' => OAIAdsBotPolicy::USER_AGENT,
+            'action' => $action,
+            'module' => 'ads_module',
+            'path' => 'mode_0.ads_module.oai_adsbot_policy',
+            'from' => $old,
+            'to' => $new,
+            'label' => $new === OAIAdsBotPolicy::ALLOW
+                ? 'ChatGPT Ads: allow OAI-AdsBot on public pages, respecting site exclusions'
+                : 'ChatGPT Ads: disallow OAI-AdsBot crawling',
         ];
     }
 
